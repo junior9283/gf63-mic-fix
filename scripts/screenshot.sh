@@ -15,7 +15,9 @@ mkdir -p "$runtime/config/gtk-4.0"
 printf '[Settings]\ngtk-enable-animations=false\n' > "$runtime/config/gtk-4.0/settings.ini"
 XDG_RUNTIME_DIR=$runtime gtk4-broadwayd :19 >/dev/null 2>&1 &
 broadway=$!
-trap 'kill $broadway 2>/dev/null; rm -rf "$runtime"' EXIT
+# Show the footer of a packaged install (the most common case), not "development copy".
+echo rpm >src/install-type
+trap 'kill $broadway 2>/dev/null; rm -rf "$runtime" src/install-type' EXIT
 sleep 0.5
 shot() { # lang scheme output
     XDG_RUNTIME_DIR=$runtime XDG_CONFIG_HOME=$runtime/config GDK_BACKEND=broadway BROADWAY_DISPLAY=:19 GSK_RENDERER=cairo \

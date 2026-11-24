@@ -8,3 +8,4 @@ build/
 dist/
 *.mo
 /src/locale/
+/src/install-type

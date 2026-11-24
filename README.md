@@ -2,6 +2,12 @@
 
 <p align="center"><b>English</b> · <a href="README.pt-BR.md">Português (Brasil)</a></p>
 
+<p align="center">
+  <a href="https://github.com/junior9283/gf63-mic-fix/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/junior9283/gf63-mic-fix?label=release"></a>
+  <a href="https://github.com/junior9283/gf63-mic-fix/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/junior9283/gf63-mic-fix/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: GPL-3.0-or-later" src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue"></a>
+</p>
+
 # GF63 Mic Fix
 
 On Linux, the built-in microphone of the **MSI GF63 Thin** is unusable: whatever you say is buried
