@@ -55,6 +55,10 @@ def text(x, y, s, size=16, fill="#000", weight=400, anchor="start") -> str:
     )
 
 
+def hline(x1, y1, x2, y2, color) -> str:
+    return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{color}" stroke-width="1"/>'
+
+
 # --- banner -------------------------------------------------------------------------------
 def banner() -> str:
     icon = (ROOT / "data/io.github.junior9283.Gf63MicFix.svg").read_text()
@@ -93,7 +97,13 @@ def diagram(t: dict) -> str:
     y, h = 120, 96
     body = (
         text(40, 52, "How it works", 26, t["ink"], 700)
-        + text(40, 82, "A virtual microphone in PipeWire; the hardware and other apps are untouched.", 16, t["ink2"])
+        + text(
+            40,
+            82,
+            "A virtual microphone in PipeWire; the hardware and other apps are untouched.",
+            16,
+            t["ink2"],
+        )
         # physical source with its two channels
         + f'<rect x="40" y="{y - 10}" width="230" height="{h + 20}" rx="14" fill="{t["box"]}" '
         f'stroke="{t["axis"]}" stroke-width="2"/>'
@@ -114,8 +124,13 @@ def diagram(t: dict) -> str:
         + box(850, y, 150, h, "RNNoise", "optional", dashed=True)
         + arrow(1000, y + h / 2, 1050, y + h / 2, t["accent"])
         + box(1050, y, 210, h, "Internal mic (fixed)", "what apps use", strong=True)
-        + text(40, 290, "Gain: the physical input is set to 20% (+18 dB) instead of up to +60 dB, "
-               "so it no longer clips.", 16, t["ink2"])  # fmt: skip
+        + text(
+            40,
+            290,
+            "Gain: the physical input is set to 20% (+18 dB) instead of up to +60 dB, so it no longer clips.",
+            16,
+            t["ink2"],
+        )  # fmt: skip
     )
     return svg(1300, 320, body, t["surface"])
 
@@ -129,10 +144,10 @@ def chart(t: dict) -> str:
         v = lo
         while v <= hi:
             x = scale(v)
-            parts.append(f'<line x1="{x}" y1="170" x2="{x}" y2="{axis_y}" stroke="{t["grid"]}" stroke-width="1"/>')
+            parts.append(hline(x, 170, x, axis_y, t["grid"]))
             parts.append(text(x, axis_y + 24, f"{v:g}", 14, t["muted"], 400, "middle"))
             v += step
-        parts.append(f'<line x1="{x0}" y1="{axis_y}" x2="{x0 + w}" y2="{axis_y}" stroke="{t["axis"]}" stroke-width="1"/>')
+        parts.append(hline(x0, axis_y, x0 + w, axis_y, t["axis"]))
         parts.append(text(x0 + w, axis_y + 48, unit, 14, t["muted"], 400, "end"))
         b, a = scale(values["before"]), scale(values["after"])
         direction = 1 if a > b else -1
@@ -143,7 +158,8 @@ def chart(t: dict) -> str:
             f'fill="{t["muted"]}"/>'
         )
         for key, x in (("before", b), ("after", a)):
-            parts.append(f'<circle cx="{x}" cy="200" r="9" fill="{t[key]}" stroke="{t["surface"]}" stroke-width="2"/>')
+            ring = f'stroke="{t["surface"]}" stroke-width="2"'
+            parts.append(f'<circle cx="{x}" cy="200" r="9" fill="{t[key]}" {ring}/>')
             parts.append(text(x, 182, f"{values[key]:+g}", 16, t["ink"], 700, "middle"))
         return "".join(parts)
 
@@ -165,7 +181,8 @@ def chart(t: dict) -> str:
 def write(name: str, content: str, width: int) -> None:
     path = OUT / f"{name}.svg"
     path.write_text(content)
-    GdkPixbuf.Pixbuf.new_from_file_at_size(str(path), width, -1).savev(str(OUT / f"{name}.png"), "png", [], [])
+    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(str(path), width, -1)
+    pixbuf.savev(str(OUT / f"{name}.png"), "png", [], [])
     print(OUT / f"{name}.png")
 
 
