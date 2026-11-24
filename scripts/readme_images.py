@@ -16,10 +16,10 @@ ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/assets"
 FONT = "Cantarell, 'Noto Sans', 'DejaVu Sans', sans-serif"
 
-# GF63 Thin 10SC, 24/11/2026: default distro settings vs. GF63 Mic Fix.
+# GF63 Thin 10SC, 24/11/2026, RMS over 2 s: raw stereo input at 100% vs. GF63 Mic Fix.
 MEASURED = {
-    "noise": {"before": -6.8, "after": -40.0},  # level in silence, dBFS (lower is better)
-    "tone": {"before": 13.0, "after": 22.0},  # 1 kHz test tone above the noise, dB (higher is better)
+    "noise": {"before": -4.2, "after": -29.4},  # level in silence, dBFS (lower is better)
+    "tone": {"before": -0.8, "after": 14.5},  # 1 kHz test tone above the noise, dB (higher is better)
 }
 
 THEMES = {
@@ -149,15 +149,15 @@ def chart(t: dict) -> str:
 
     legend = (
         f'<circle cx="48" cy="64" r="7" fill="{t["before"]}"/>'
-        + text(62, 70, "Before: distro defaults", 16, t["ink2"])
+        + text(62, 70, "Before: input at 100%", 16, t["ink2"])
         + f'<circle cx="290" cy="64" r="7" fill="{t["after"]}"/>'
         + text(304, 70, "After: GF63 Mic Fix", 16, t["ink2"])
     )
     body = (
         text(40, 36, "Measured on a GF63 Thin 10SC", 22, t["ink"], 700)
         + legend
-        + panel(40, "Hiss in silence", "lower is better", "dBFS", -60, 0, 10, MEASURED["noise"])
-        + panel(660, "Test tone above the noise", "higher is better", "dB", 0, 30, 5, MEASURED["tone"])
+        + panel(40, "Hiss in silence", "lower is better", "dBFS", -40, 0, 5, MEASURED["noise"])
+        + panel(660, "Test tone above the noise", "higher is better", "dB", -5, 20, 5, MEASURED["tone"])
     )
     return svg(1220, 300, body, t["surface"])
 

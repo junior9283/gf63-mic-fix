@@ -19,7 +19,7 @@ O **GF63 Mic Fix** é um app pequeno que corrige isso com um botão, e desfaz co
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/before-after-dark.png">
-  <img src="docs/assets/before-after.png" alt="Medido num GF63 Thin 10SC: o chiado em silêncio cai de -6,8 para -40 dBFS; um tom de teste passa de 13 para 22 dB acima do ruído" width="100%">
+  <img src="docs/assets/before-after.png" alt="Medido num GF63 Thin 10SC: com a entrada em 100%, o chiado em silêncio fica em -4,2 dBFS e um tom de teste some nele (-0,8 dB); com a correção, o chiado cai para -29,4 dBFS e o tom fica 14,5 dB acima dele" width="100%">
 </picture>
 
 ## Por que o microfone tem ruído

@@ -19,7 +19,7 @@ while the same laptop works fine on Windows.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/before-after-dark.png">
-  <img src="docs/assets/before-after.png" alt="Measured on a GF63 Thin 10SC: hiss in silence drops from -6.8 to -40 dBFS; a test tone goes from 13 to 22 dB above the noise" width="100%">
+  <img src="docs/assets/before-after.png" alt="Measured on a GF63 Thin 10SC: with the input at 100%, hiss in silence is -4.2 dBFS and a test tone is lost in it (-0.8 dB); with the fix, hiss drops to -29.4 dBFS and the tone stands 14.5 dB above it" width="100%">
 </picture>
 
 ## Why the microphone is noisy
