@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gf63-mic-fix 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/junior9283/gf63-mic-fix/issues\n"
-"POT-Creation-Date: 2026-11-24 14:08-0300\n"
+"POT-Creation-Date: 2026-11-24 14:15-0300\n"
 "PO-Revision-Date: 2026-11-24 14:30-0300\n"
 "Last-Translator: junior9283\n"
 "Language-Team: Portuguese (Brazil)\n"
@@ -72,7 +72,9 @@ msgstr "Nada para desinstalar"
 
 #: src/gf63_mic_fix/ui/uninstall.py:31
 msgid "This copy runs from the source code. Use “Fix active” to undo the fix."
-msgstr "Esta cópia roda a partir do código-fonte. Use “Correção ativa” para desfazer a correção."
+msgstr ""
+"Esta cópia roda a partir do código-fonte. Use “Correção ativa” para desfazer "
+"a correção."
 
 #: src/gf63_mic_fix/ui/uninstall.py:32 src/gf63_mic_fix/ui/uninstall.py:67
 #: src/gf63_mic_fix/ui/window.py:337
@@ -91,7 +93,8 @@ msgstr "Desinstalar o GF63 Mic Fix?"
 msgid ""
 "The microphone goes back to how it was before the fix, and the program is "
 "removed."
-msgstr "O microfone volta a ser como era antes da correção, e o programa é removido."
+msgstr ""
+"O microfone volta a ser como era antes da correção, e o programa é removido."
 
 #: src/gf63_mic_fix/ui/uninstall.py:40 src/gf63_mic_fix/ui/window.py:316
 msgid "Cancel"
@@ -102,9 +105,8 @@ msgid "Uninstall"
 msgstr "Desinstalar"
 
 #: src/gf63_mic_fix/ui/uninstall.py:58
-#, fuzzy
 msgid "GF63 Mic Fix was removed"
-msgstr "O GF63 Mic Fix foi atualizado"
+msgstr "O GF63 Mic Fix foi removido"
 
 #: src/gf63_mic_fix/ui/uninstall.py:59
 msgid "The microphone settings were restored. Thank you for using it."
@@ -121,12 +123,12 @@ msgstr "O programa não foi removido"
 #: src/gf63_mic_fix/ui/uninstall.py:66
 msgid ""
 "The fix was turned off, but removing the program was cancelled or failed."
-msgstr "A correção foi desligada, mas a remoção do programa foi cancelada ou falhou."
+msgstr ""
+"A correção foi desligada, mas a remoção do programa foi cancelada ou falhou."
 
 #: src/gf63_mic_fix/ui/window.py:41 src/gf63_mic_fix/ui/window.py:260
-#, fuzzy
 msgid "Microphone fixed"
-msgstr "Microfone interno (corrigido)"
+msgstr "Microfone corrigido"
 
 #: src/gf63_mic_fix/ui/window.py:42
 #, python-format
@@ -143,9 +145,8 @@ msgid "Another microphone is the default. Choose “%s” or use the button belo
 msgstr "Outro microfone é o padrão. Escolha “%s” ou use o botão abaixo."
 
 #: src/gf63_mic_fix/ui/window.py:51
-#, fuzzy
 msgid "Microphone not fixed"
-msgstr "Microfone interno (corrigido)"
+msgstr "Microfone não corrigido"
 
 #: src/gf63_mic_fix/ui/window.py:52
 msgid "Turn on the fix below to remove the noise."
@@ -159,12 +160,13 @@ msgstr "Diagnóstico necessário"
 msgid ""
 "This GF63 variant has not been verified yet. A short beep confirms the "
 "defect first."
-msgstr "Esta variante do GF63 ainda não foi verificada. Um bipe curto confirma o defeito antes."
+msgstr ""
+"Esta variante do GF63 ainda não foi verificada. Um bipe curto confirma o "
+"defeito antes."
 
 #: src/gf63_mic_fix/ui/window.py:59
-#, fuzzy
 msgid "Fix unavailable"
-msgstr "O GF63 Mic Fix %s está disponível"
+msgstr "Correção indisponível"
 
 #: src/gf63_mic_fix/ui/window.py:78 src/gf63_mic_fix/ui/window.py:336
 msgid "Diagnosis"
@@ -266,7 +268,9 @@ msgstr "Executar o diagnóstico?"
 msgid ""
 "Unplug headphones and turn the volume up. A beep will play for about 2 "
 "seconds."
-msgstr "Tire o fone de ouvido e aumente o volume. Um bipe vai tocar por cerca de 2 segundos."
+msgstr ""
+"Tire o fone de ouvido e aumente o volume. Um bipe vai tocar por cerca de 2 "
+"segundos."
 
 #: src/gf63_mic_fix/ui/window.py:317
 msgid "Run"
@@ -277,18 +281,20 @@ msgid "Defect confirmed. You can turn on the fix now."
 msgstr "Defeito confirmado. Agora você pode ligar a correção."
 
 #: src/gf63_mic_fix/ui/window.py:326
-#, fuzzy
 msgid "This laptop does not have the known defect. Nothing was changed."
-msgstr "O microfone corrigido não iniciou. Nada foi alterado."
+msgstr "Este notebook não tem o defeito conhecido. Nada foi alterado."
 
 #: src/gf63_mic_fix/ui/window.py:328
 msgid ""
 "The beep was not heard. Unplug headphones, turn the volume up and try again."
-msgstr "O bipe não foi ouvido. Tire o fone de ouvido, aumente o volume e tente de novo."
+msgstr ""
+"O bipe não foi ouvido. Tire o fone de ouvido, aumente o volume e tente de "
+"novo."
 
 #: src/gf63_mic_fix/ui/window.py:352
 msgid "Fixes the noisy internal microphone of MSI GF63 Thin laptops on Linux."
-msgstr "Corrige o microfone interno com ruído dos notebooks MSI GF63 Thin no Linux."
+msgstr ""
+"Corrige o microfone interno com ruído dos notebooks MSI GF63 Thin no Linux."
 
 #: src/gf63_mic_fix/updater.py:187
 msgid "GF63 Mic Fix was updated"

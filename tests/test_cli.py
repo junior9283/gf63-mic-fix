@@ -119,6 +119,11 @@ def test_pt_br_translates_every_string(tmp_path):
     assert not missing, f"untranslated: {missing}"
 
 
+def test_pt_br_has_no_fuzzy_guesses():
+    # msgfmt skips fuzzy entries, so the UI would silently show English.
+    assert "#, fuzzy" not in (ROOT / "po/pt_BR.po").read_text()
+
+
 def test_launcher_runs_from_app_dir():
     env = {**os.environ, "GF63_MIC_FIX_APPDIR": str(ROOT / "src")}
     out = subprocess.run(

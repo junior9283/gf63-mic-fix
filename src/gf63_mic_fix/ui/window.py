@@ -32,6 +32,9 @@ def run_in_thread(work, done):
     threading.Thread(target=target, daemon=True).start()
 
 
+ICON_STYLE = {Status.FIXED: "success", Status.FIXED_NOT_DEFAULT: "warning", Status.NEEDS_DIAGNOSIS: "accent"}
+
+
 def _status_text(st: Status, product: str) -> tuple[str, str, str]:
     """(icon, title, description) for the status page."""
     fixed_name = _("Internal microphone (fixed)")
@@ -89,8 +92,13 @@ class MainWindow(Adw.ApplicationWindow):
             Gtk.MenuButton(icon_name="open-menu-symbolic", menu_model=menu, tooltip_text=_("Menu"))
         )
 
-        self.page = Adw.StatusPage()
-        self.page.add_css_class("compact")
+        # A plain header instead of Adw.StatusPage, whose inner scrolling clips the text in a box.
+        self.icon = Gtk.Image(pixel_size=72, margin_top=12)
+        self.title = Gtk.Label(css_classes=["title-1"], wrap=True, justify=Gtk.Justification.CENTER)
+        self.description = Gtk.Label(wrap=True, justify=Gtk.Justification.CENTER, max_width_chars=44)
+        self.page = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=8)
+        for w in (self.icon, self.title, self.description):
+            self.page.append(w)
         self.product = Gtk.Label(css_classes=["dim-label", "caption"])
 
         self.level = Gtk.LevelBar(min_value=0, max_value=1, hexpand=True, valign=Gtk.Align.CENTER)
@@ -188,9 +196,10 @@ class MainWindow(Adw.ApplicationWindow):
         st, gain, noise = result
         self.status = st
         icon, title, desc = _status_text(st, self.fixer.hardware.product)
-        self.page.set_icon_name(icon)
-        self.page.set_title(title)
-        self.page.set_description(desc)
+        self.icon.set_from_icon_name(icon)
+        self.icon.set_css_classes([ICON_STYLE.get(st, "dim-label")])
+        self.title.set_label(title)
+        self.description.set_label(desc)
         hw = self.fixer.hardware
         self.product.set_label(
             f"{hw.product or _('Unknown laptop')} · Realtek ALC233" if hw.supported else ""
@@ -218,7 +227,7 @@ class MainWindow(Adw.ApplicationWindow):
         self._busy(False)
         self._restart_meter(VIRTUAL_SOURCE if fixed else None)
         if self.on_ready:
-            GLib.timeout_add(300, lambda: self.on_ready(self) and False)
+            self.on_ready(self)
 
     # --- meter --------------------------------------------------------------------------
     def _restart_meter(self, source):
@@ -229,7 +238,7 @@ class MainWindow(Adw.ApplicationWindow):
             source = source or self.fixer.physical_source()
         except FixError:
             return
-        self.meter = LevelMeter(self.runner, source, self._on_level)
+        self.meter = LevelMeter(self.runner, source, self.show_level)
         self.meter.start()
 
     def _stop_meter(self):
@@ -237,7 +246,7 @@ class MainWindow(Adw.ApplicationWindow):
             self.meter.stop()
             self.meter = None
 
-    def _on_level(self, db: float):
+    def show_level(self, db: float):
         self.level.set_value(max(0.0, min(1.0, (db + 60) / 60)))  # -60..0 dBFS
 
     # --- actions ------------------------------------------------------------------------

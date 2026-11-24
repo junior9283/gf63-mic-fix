@@ -28,6 +28,8 @@ def _parser() -> argparse.ArgumentParser:
     g.add_argument("--check-update", action="store_true", help="check for a new version (timer)")
     g.add_argument("--uninstall", action="store_true", help="open the uninstaller")
     g.add_argument("--version", action="store_true", help="print the version")
+    g.add_argument("--screenshot", metavar="PNG", help=argparse.SUPPRESS)  # development only
+    p.add_argument("--fake-status", default="FIXED", choices=[s.name for s in Status], help=argparse.SUPPRESS)
     return p
 
 
@@ -41,6 +43,10 @@ def main(argv: list[str] | None = None, fixer: Fixer | None = None) -> int:
 
         run_scheduled()
         return 0
+    if args.screenshot:
+        from .ui.preview import screenshot
+
+        return screenshot(args.screenshot, args.fake_status)
     if not (args.status or args.apply or args.undo):
         from .ui.app import run  # GTK is only imported for the window
 
