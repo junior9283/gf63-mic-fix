@@ -1,0 +1,15 @@
+# Tooling configuration only; the app is installed by packaging/build.sh, not pip.
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "slow: needs gpg key generation",
+  "ui: needs gtk4-broadwayd",
+]
