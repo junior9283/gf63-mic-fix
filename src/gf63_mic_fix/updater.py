@@ -22,7 +22,7 @@ from .sysrun import Runner
 REPO = "junior9283/gf63-mic-fix"
 API_LATEST = f"https://api.github.com/repos/{REPO}/releases/latest"
 DOWNLOAD_PREFIX = f"https://github.com/{REPO}/releases/download/"
-SIGNING_FINGERPRINT = ""  # filled in when the signing key is created; empty disables self-update
+SIGNING_FINGERPRINT = "5972B2DCEFAF53DC842CC3EA20072D0D235CAC26"  # data/signing-key.asc
 
 log = logging.getLogger(__name__)
 Fetch = Callable[[str], bytes]

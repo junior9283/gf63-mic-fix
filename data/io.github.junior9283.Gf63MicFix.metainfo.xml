@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.junior9283.Gf63MicFix</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>GF63 Mic Fix</name>
+  <summary>Fix the noisy internal microphone of MSI GF63 Thin laptops</summary>
+  <summary xml:lang="pt-BR">Corrige o microfone interno com ruído dos notebooks MSI GF63 Thin</summary>
+  <developer id="io.github.junior9283">
+    <name>junior9283</name>
+  </developer>
+  <description>
+    <p>On Linux, the internal microphone of the MSI GF63 Thin is unusable: one of the two capture
+      channels is not wired to the microphone and only carries hiss, and the default gain is far
+      too high. GF63 Mic Fix creates a clean microphone that uses only the working channel, removes
+      the low hum and sets a sensible gain. Everything can be undone with one click.</p>
+    <p xml:lang="pt-BR">No Linux, o microfone interno do MSI GF63 Thin fica inutilizável: um dos dois
+      canais de captura não está ligado ao microfone e só traz chiado, e o ganho padrão é alto demais.
+      O GF63 Mic Fix cria um microfone limpo que usa só o canal que funciona, tira o ronco grave e
+      ajusta um ganho adequado. Tudo pode ser desfeito com um clique.</p>
+  </description>
+  <launchable type="desktop-id">io.github.junior9283.Gf63MicFix.desktop</launchable>
+  <url type="homepage">https://github.com/junior9283/gf63-mic-fix</url>
+  <url type="bugtracker">https://github.com/junior9283/gf63-mic-fix/issues</url>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/junior9283/gf63-mic-fix/main/docs/assets/screenshot-en.png</image>
+      <caption>The microphone after the fix</caption>
+    </screenshot>
+  </screenshots>
+  <content_rating type="oars-1.1"/>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+  <releases>
+    <release version="1.0.0" date="2026-11-24">
+      <description><p>First release.</p></description>
+    </release>
+  </releases>
+</component>

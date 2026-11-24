@@ -1,0 +1,51 @@
+name: My GF63 is different / Meu GF63 é diferente
+description: Report a GF63 Thin variant the app does not know yet (Relate uma variante que o app ainda não conhece)
+labels: [new-variant]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks! This lets us mark your model as verified. / Obrigado! Isso permite marcar seu modelo como verificado.
+  - type: input
+    id: model
+    attributes:
+      label: Model / Modelo
+      description: "Output of / Saída de: cat /sys/class/dmi/id/product_name"
+      placeholder: GF63 Thin 10SC
+    validations:
+      required: true
+  - type: input
+    id: distro
+    attributes:
+      label: Distribution / Distribuição
+      placeholder: Fedora 44, Ubuntu 24.04, ...
+    validations:
+      required: true
+  - type: textarea
+    id: status
+    attributes:
+      label: "gf63-mic-fix --status"
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: diagnosis
+    attributes:
+      label: Diagnosis result / Resultado do diagnóstico
+      options:
+        - Defect confirmed / Defeito confirmado
+        - No defect / Sem defeito
+        - Inconclusive / Inconclusivo
+        - Could not run it / Não consegui rodar
+    validations:
+      required: true
+  - type: textarea
+    id: codec
+    attributes:
+      label: Audio codec / Codec de áudio
+      description: "Output of / Saída de: grep -h 'Codec\\|Vendor Id' /proc/asound/card*/codec#*"
+      render: text
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else / Algo mais

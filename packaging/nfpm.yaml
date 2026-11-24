@@ -1,0 +1,112 @@
+# Used by packaging/build.sh (run from the project root, after it fills build/).
+name: gf63-mic-fix
+arch: all
+platform: linux
+version: ${VERSION}
+release: 1
+section: sound
+priority: optional
+maintainer: junior9283 <eng.geraldo@outlook.com>
+vendor: junior9283
+homepage: https://github.com/junior9283/gf63-mic-fix
+license: GPL-3.0-or-later
+description: |-
+  Fix the noisy internal microphone of MSI GF63 Thin laptops
+  One of the two capture channels of the Realtek ALC233 is not wired to the
+  microphone and only carries hiss. GF63 Mic Fix creates a clean microphone
+  in PipeWire that uses only the working channel, removes the low hum and
+  sets a sensible gain. Everything can be undone from the app.
+
+contents:
+  - src: build/root/usr/share/gf63-mic-fix
+    dst: /usr/share/gf63-mic-fix
+    type: tree
+  - src: build/install-type.rpm
+    dst: /usr/share/gf63-mic-fix/install-type
+    packager: rpm
+  - src: build/install-type.deb
+    dst: /usr/share/gf63-mic-fix/install-type
+    packager: deb
+  - src: build/install-type.arch
+    dst: /usr/share/gf63-mic-fix/install-type
+    packager: archlinux
+
+  - src: bin/gf63-mic-fix
+    dst: /usr/bin/gf63-mic-fix
+    file_info: {mode: 0755}
+  - src: data/gf63-mic-fix-uninstall
+    dst: /usr/libexec/gf63-mic-fix-uninstall
+    file_info: {mode: 0755}
+  - src: data/gf63-mic-fix.service
+    dst: /usr/lib/systemd/user/gf63-mic-fix.service
+  - src: data/io.github.junior9283.gf63micfix.policy
+    dst: /usr/share/polkit-1/actions/io.github.junior9283.gf63micfix.policy
+  - src: data/io.github.junior9283.Gf63MicFix.desktop
+    dst: /usr/share/applications/io.github.junior9283.Gf63MicFix.desktop
+  - src: data/io.github.junior9283.Gf63MicFix.Uninstall.desktop
+    dst: /usr/share/applications/io.github.junior9283.Gf63MicFix.Uninstall.desktop
+  - src: data/io.github.junior9283.Gf63MicFix.svg
+    dst: /usr/share/icons/hicolor/scalable/apps/io.github.junior9283.Gf63MicFix.svg
+  - src: data/io.github.junior9283.Gf63MicFix.metainfo.xml
+    dst: /usr/share/metainfo/io.github.junior9283.Gf63MicFix.metainfo.xml
+
+  # Updates come from the project's own package repository (rpm, deb) ...
+  - src: data/gf63-mic-fix.repo
+    dst: /etc/yum.repos.d/gf63-mic-fix.repo
+    type: config|noreplace
+    packager: rpm
+  - src: data/gf63-mic-fix.sources
+    dst: /etc/apt/sources.list.d/gf63-mic-fix.sources
+    type: config
+    packager: deb
+  # ... or, on Arch, from a weekly check that notifies about new releases.
+  - src: data/gf63-mic-fix-update.service
+    dst: /usr/lib/systemd/user/gf63-mic-fix-update.service
+    packager: archlinux
+  - src: data/gf63-mic-fix-update.timer
+    dst: /usr/lib/systemd/user/gf63-mic-fix-update.timer
+    packager: archlinux
+
+overrides:
+  rpm:
+    depends:
+      - python3 >= 3.11
+      - python3-gobject
+      - gtk4
+      - libadwaita >= 1.5
+      - pipewire >= 1.0
+      - pipewire-pulseaudio
+      - pipewire-utils
+      - pulseaudio-utils
+      - wireplumber
+      - gnupg2
+      - polkit
+    recommends:
+      - ladspa-noise-suppression-for-voice
+  deb:
+    depends:
+      - python3 (>= 3.11)
+      - python3-gi
+      - gir1.2-gtk-4.0
+      - gir1.2-adw-1 (>= 1.5)
+      - pipewire (>= 1.0)
+      - pipewire-pulse
+      - pipewire-bin
+      - pulseaudio-utils
+      - wireplumber
+      - gpg
+      - pkexec | policykit-1
+  archlinux:
+    depends:
+      - python
+      - python-gobject
+      - gtk4
+      - libadwaita
+      - pipewire
+      - pipewire-pulse
+      - libpulse
+      - wireplumber
+      - gnupg
+      - polkit
+    suggests:
+      - "noise-suppression-for-voice: removes fan and keyboard noise"

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="320" viewBox="0 0 1280 320" font-family="Cantarell, 'Noto Sans', 'DejaVu Sans', sans-serif"><defs><linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2b1260"/><stop offset="1" stop-color="#5b2bc4"/></linearGradient></defs><rect width="1280" height="320" rx="24" fill="url(#b)"/><g transform="translate(96 64) scale(1.5)">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7b3fe4"/>
+      <stop offset="1" stop-color="#4f1fb0"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="26" fill="url(#bg)"/>
+  <!-- microphone -->
+  <rect x="46" y="22" width="30" height="50" rx="15" fill="#ffffff"/>
+  <path d="M34 58v4a27 27 0 0 0 54 0v-4" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+  <path d="M61 89v13M47 104h28" fill="none" stroke="#ffffff" stroke-width="7" stroke-linecap="round"/>
+  <!-- check badge -->
+  <circle cx="94" cy="92" r="21" fill="#2ec27e" stroke="#4f1fb0" stroke-width="5"/>
+  <path d="M84 92l7 7 13-14" fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+</g><text x="352" y="150" font-size="72" font-weight="700" fill="#ffffff" text-anchor="start">GF63 Mic Fix</text><text x="354" y="204" font-size="30" font-weight="400" fill="#e6dcff" text-anchor="start">Fix the noisy internal mic of MSI GF63 Thin on Linux</text><text x="354" y="248" font-size="22" font-weight="400" fill="#c7b5f5" text-anchor="start">PipeWire · rpm · deb · Arch · any distro</text></svg>

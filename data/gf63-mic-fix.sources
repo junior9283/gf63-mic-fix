@@ -1,0 +1,4 @@
+Types: deb
+URIs: https://junior9283.github.io/gf63-mic-fix/deb/
+Suites: ./
+Signed-By: /usr/share/gf63-mic-fix/signing-key.asc

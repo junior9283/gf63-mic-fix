@@ -1,0 +1,7 @@
+[gf63-mic-fix]
+name=GF63 Mic Fix
+baseurl=https://junior9283.github.io/gf63-mic-fix/rpm/
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=file:///usr/share/gf63-mic-fix/signing-key.asc
