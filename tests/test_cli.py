@@ -1,5 +1,4 @@
 import os
-import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -92,8 +91,20 @@ def test_translation_pt_br(compiled_locale):
     assert i18n._("Internal microphone (fixed)") == "Microfone interno (corrigido)"
 
 
-def _msgids(po_text: str) -> set[str]:
-    return {m for m in re.findall(r'^msgid "(.+)"$', po_text, re.M)}
+def _entries(po_text: str) -> dict[str, str]:
+    """msgid -> msgstr, joining the continuation lines gettext uses for long strings."""
+    out = {}
+    for block in po_text.split("\n\n"):
+        fields, key = {}, None
+        for line in block.splitlines():
+            if line.startswith(("msgid ", "msgstr ")):
+                key, _, rest = line.partition(" ")
+                fields[key] = rest[1:-1]
+            elif line.startswith('"') and key:
+                fields[key] += line[1:-1]
+        if fields.get("msgid"):
+            out[fields["msgid"]] = fields.get("msgstr", "")
+    return out
 
 
 @pytest.mark.skipif(not shutil.which("xgettext"), reason="needs gettext")
@@ -103,10 +114,9 @@ def test_pt_br_translates_every_string(tmp_path):
     subprocess.run(
         ["xgettext", "-L", "Python", "--keyword=_", "--from-code=UTF-8", "-o", str(pot), *sources], check=True
     )
-    po = (ROOT / "po/pt_BR.po").read_text()
-    missing = _msgids(pot.read_text()) - _msgids(po)
-    assert not missing, f"untranslated: {sorted(missing)}"
-    assert not re.search(r'^msgstr ""\n\n', po.split("\n\n", 1)[1], re.M), "empty msgstr"
+    po = _entries((ROOT / "po/pt_BR.po").read_text())
+    missing = [m for m in _entries(pot.read_text()) if not po.get(m)]
+    assert not missing, f"untranslated: {missing}"
 
 
 def test_launcher_runs_from_app_dir():
