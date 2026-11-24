@@ -1,0 +1,12 @@
+#!/bin/sh
+# GF63 Mic Fix launcher: finds the app directory and runs it with the system Python.
+set -eu
+here=$(dirname "$(readlink -f "$0")")
+if [ -n "${GF63_MIC_FIX_APPDIR:-}" ]; then
+    appdir=$GF63_MIC_FIX_APPDIR
+elif [ "$here" = "$HOME/.local/bin" ]; then
+    appdir=$HOME/.local/share/gf63-mic-fix
+else
+    appdir=/usr/share/gf63-mic-fix
+fi
+exec python3 -I -c 'import sys; sys.path.insert(0, sys.argv.pop(1)); from gf63_mic_fix.cli import main; sys.exit(main(sys.argv[1:]))' "$appdir" "$@"

@@ -1,0 +1,59 @@
+# Portuguese (Brazil) translation of GF63 Mic Fix.
+# This file is distributed under the same license as the gf63-mic-fix package (GPL-3.0).
+msgid ""
+msgstr ""
+"Project-Id-Version: gf63-mic-fix 1.0.0\n"
+"Report-Msgid-Bugs-To: https://github.com/junior9283/gf63-mic-fix/issues\n"
+"POT-Creation-Date: 2026-11-24 14:01-0300\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: src/gf63_mic_fix/fix.py:45
+msgid "This laptop is not an MSI GF63 Thin with a Realtek ALC233 codec."
+msgstr "Este notebook não é um MSI GF63 Thin com codec Realtek ALC233."
+
+#: src/gf63_mic_fix/fix.py:46
+msgid "PipeWire is not the sound server. This fix needs PipeWire."
+msgstr "O servidor de som não é o PipeWire. Esta correção precisa do PipeWire."
+
+#: src/gf63_mic_fix/fix.py:47
+#, python-format
+msgid "PipeWire is too old. Version %s or newer is required."
+msgstr "O PipeWire é antigo demais. É necessária a versão %s ou mais recente."
+
+#: src/gf63_mic_fix/fix.py:49
+msgid "Run the diagnosis first: this GF63 variant has not been verified yet."
+msgstr ""
+"Execute o diagnóstico antes: esta variante do GF63 ainda não foi verificada."
+
+#: src/gf63_mic_fix/fix.py:76
+#, python-format
+msgid "Sound server command failed: %s"
+msgstr "O comando do servidor de som falhou: %s"
+
+#: src/gf63_mic_fix/fix.py:91
+msgid "Could not read the microphone volume."
+msgstr "Não foi possível ler o volume do microfone."
+
+#: src/gf63_mic_fix/fix.py:105
+msgid "The RNNoise noise suppression plugin is not installed."
+msgstr "O plugin de supressão de ruído RNNoise não está instalado."
+
+#: src/gf63_mic_fix/fix.py:111
+msgid "Internal microphone (fixed)"
+msgstr "Microfone interno (corrigido)"
+
+#: src/gf63_mic_fix/fix.py:128
+msgid "The internal microphone was not found by the sound server."
+msgstr "O servidor de som não encontrou o microfone interno."
+
+#: src/gf63_mic_fix/fix.py:169
+msgid "The fixed microphone did not start. Nothing was changed."
+msgstr "O microfone corrigido não iniciou. Nada foi alterado."
+
+#: src/gf63_mic_fix/fix.py:191
+msgid "Noise suppression could not start, so it was turned off."
+msgstr "A supressão de ruído não conseguiu iniciar e foi desligada."
