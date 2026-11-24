@@ -41,7 +41,7 @@ jobs:
           grep " nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz$" checksums.txt | sha256sum -c -
           sudo tar -xzf "nfpm_${NFPM_VERSION}_Linux_x86_64.tar.gz" -C /usr/local/bin nfpm
           rm -f nfpm_*.tar.gz checksums.txt
-      - run: sudo apt-get install -y -qq gettext zstd
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq gettext zstd
       - name: Build packages
         run: packaging/build.sh "$(sed -n 's/^__version__ = "\(.*\)"$/\1/p' src/gf63_mic_fix/__init__.py)" dist
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

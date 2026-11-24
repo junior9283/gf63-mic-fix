@@ -24,8 +24,8 @@ podman run --rm --pull=newer -v "$PWD:/src:ro,Z" -v "$keys:/keys:ro,Z" -v "$work
 python3 -m http.server "$port" -d "$work/site" >/dev/null 2>&1 &
 server=$!
 trap 'kill $server 2>/dev/null' EXIT
-sleep 1
 url=http://127.0.0.1:$port
+for _ in $(seq 50); do curl -fs "$url/signing-key.asc" >/dev/null && break; sleep 0.1; done
 
 echo "== dnf from the repository (fedora)"
 podman run --rm --pull=newer --network=host fedora:latest sh -ec "
