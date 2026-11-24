@@ -1,0 +1,21 @@
+Package: gf63-mic-fix
+Architecture: all
+Version: 1.0.0-1
+Priority: optional
+Section: sound
+Maintainer: junior9283 <eng.geraldo@outlook.com>
+Installed-Size: 72
+Depends: python3 (>= 3.11), python3-gi, gir1.2-gtk-4.0, gir1.2-adw-1 (>= 1.5), pipewire (>= 1.0), pipewire-pulse, pipewire-bin, pulseaudio-utils, wireplumber, gpg, pkexec | policykit-1
+Filename: ./gf63-mic-fix_1.0.0-1_all.deb
+Size: 28174
+MD5sum: 796826653ec52d9886aa5cf204b345a6
+SHA1: eda2f03720640422809f7a25e7d08b74c6e636ee
+SHA256: 169d60bd6d49bd03e73c59bde2df14bb334d444092b9f4062eaf0eafd3d3aefc
+SHA512: 076f6d9b3f3e51bf9cbec8d4337205487938ae1c8ea1e3e50b2759dc30844cfe4a6936e7aea2d5108c13a4e79c68b26d0751190152911c18e0ed86bba74290bd
+Homepage: https://github.com/junior9283/gf63-mic-fix
+Description: Fix the noisy internal microphone of MSI GF63 Thin laptops
+ One of the two capture channels of the Realtek ALC233 is not wired to the
+ microphone and only carries hiss. GF63 Mic Fix creates a clean microphone
+ in PipeWire that uses only the working channel, removes the low hum and
+ sets a sensible gain. Everything can be undone from the app.
+
