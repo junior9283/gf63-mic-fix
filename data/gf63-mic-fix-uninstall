@@ -1,0 +1,14 @@
+#!/bin/sh
+# Removes the gf63-mic-fix package with the distribution's package manager.
+# Run through pkexec by the app's uninstaller. Takes no arguments.
+set -eu
+PATH=/usr/sbin:/usr/bin:/sbin:/bin
+if command -v rpm >/dev/null 2>&1 && rpm -q gf63-mic-fix >/dev/null 2>&1; then
+    exec dnf remove -y gf63-mic-fix
+elif command -v dpkg >/dev/null 2>&1 && dpkg -s gf63-mic-fix >/dev/null 2>&1; then
+    DEBIAN_FRONTEND=noninteractive exec apt-get purge -y gf63-mic-fix
+elif command -v pacman >/dev/null 2>&1 && pacman -Q gf63-mic-fix >/dev/null 2>&1; then
+    exec pacman -Rns --noconfirm gf63-mic-fix
+fi
+echo "gf63-mic-fix is not installed as a package" >&2
+exit 1

@@ -26,6 +26,7 @@ def _parser() -> argparse.ArgumentParser:
     g.add_argument("--apply", action="store_true", help="apply the fix")
     g.add_argument("--undo", action="store_true", help="undo the fix")
     g.add_argument("--check-update", action="store_true", help="check for a new version (timer)")
+    g.add_argument("--uninstall", action="store_true", help="open the uninstaller")
     g.add_argument("--version", action="store_true", help="print the version")
     return p
 
@@ -43,7 +44,7 @@ def main(argv: list[str] | None = None, fixer: Fixer | None = None) -> int:
     if not (args.status or args.apply or args.undo):
         from .ui.app import run  # GTK is only imported for the window
 
-        return run()
+        return run(uninstall=args.uninstall)
     fixer = fixer or Fixer(Runner())
     if args.status:
         st = fixer.status()

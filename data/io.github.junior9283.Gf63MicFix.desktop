@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Name=GF63 Mic Fix
+Name[pt_BR]=GF63 Mic Fix
+GenericName=Microphone fix
+GenericName[pt_BR]=Correção do microfone
+Comment=Fix the noisy internal microphone of MSI GF63 Thin laptops
+Comment[pt_BR]=Corrige o microfone interno com ruído dos notebooks MSI GF63 Thin
+Exec=gf63-mic-fix
+Icon=io.github.junior9283.Gf63MicFix
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=microphone;mic;noise;msi;gf63;pipewire;
+Keywords[pt_BR]=microfone;mic;ruído;chiado;msi;gf63;pipewire;
+StartupNotify=true

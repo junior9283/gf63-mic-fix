@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1/policyconfig.dtd">
+<policyconfig>
+  <vendor>GF63 Mic Fix</vendor>
+  <vendor_url>https://github.com/junior9283/gf63-mic-fix</vendor_url>
+  <action id="io.github.junior9283.gf63micfix.uninstall">
+    <description>Uninstall GF63 Mic Fix</description>
+    <description xml:lang="pt_BR">Desinstalar o GF63 Mic Fix</description>
+    <message>Authentication is required to remove GF63 Mic Fix</message>
+    <message xml:lang="pt_BR">É necessário autenticar para remover o GF63 Mic Fix</message>
+    <icon_name>io.github.junior9283.Gf63MicFix</icon_name>
+    <defaults>
+      <allow_any>auth_admin</allow_any>
+      <allow_inactive>auth_admin</allow_inactive>
+      <allow_active>auth_admin</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/libexec/gf63-mic-fix-uninstall</annotate>
+  </action>
+</policyconfig>

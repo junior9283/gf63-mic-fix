@@ -8,13 +8,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gf63-mic-fix 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/junior9283/gf63-mic-fix/issues\n"
-"POT-Creation-Date: 2026-11-24 14:05-0300\n"
+"POT-Creation-Date: 2026-11-24 14:08-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: src/gf63_mic_fix/diagnose.py:137
@@ -52,7 +52,7 @@ msgstr ""
 msgid "The RNNoise noise suppression plugin is not installed."
 msgstr ""
 
-#: src/gf63_mic_fix/fix.py:111
+#: src/gf63_mic_fix/fix.py:111 src/gf63_mic_fix/ui/window.py:37
 msgid "Internal microphone (fixed)"
 msgstr ""
 
@@ -66,6 +66,225 @@ msgstr ""
 
 #: src/gf63_mic_fix/fix.py:191
 msgid "Noise suppression could not start, so it was turned off."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:30
+msgid "Nothing to uninstall"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:31
+msgid "This copy runs from the source code. Use “Fix active” to undo the fix."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:32 src/gf63_mic_fix/ui/uninstall.py:67
+#: src/gf63_mic_fix/ui/window.py:337
+msgid "OK"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:35
+msgid "Your password will be asked to remove the program."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:37
+msgid "Uninstall GF63 Mic Fix?"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:38
+msgid ""
+"The microphone goes back to how it was before the fix, and the program is "
+"removed."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:40 src/gf63_mic_fix/ui/window.py:316
+msgid "Cancel"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:40
+msgid "Uninstall"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:58
+msgid "GF63 Mic Fix was removed"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:59
+msgid "The microphone settings were restored. Thank you for using it."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:60
+msgid "Close"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:65
+msgid "The program was not removed"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/uninstall.py:66
+msgid ""
+"The fix was turned off, but removing the program was cancelled or failed."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:41 src/gf63_mic_fix/ui/window.py:260
+msgid "Microphone fixed"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:42
+#, python-format
+msgid "Apps now use “%s”."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:46
+msgid "Fix active, but not in use"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:47
+#, python-format
+msgid "Another microphone is the default. Choose “%s” or use the button below."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:51
+msgid "Microphone not fixed"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:52
+msgid "Turn on the fix below to remove the noise."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:56
+msgid "Diagnosis needed"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:57
+msgid ""
+"This GF63 variant has not been verified yet. A short beep confirms the "
+"defect first."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:59
+msgid "Fix unavailable"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:78 src/gf63_mic_fix/ui/window.py:336
+msgid "Diagnosis"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:79
+msgid "About GF63 Mic Fix"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:80
+msgid "Uninstall…"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:89
+msgid "Menu"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:98
+msgid "Level"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:102
+msgid "Fix active"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:102
+msgid "Use only the working channel, without hum"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:112
+msgid "Microphone gain"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:112
+msgid "Raise it if your voice is too low"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:116
+msgid "Noise suppression (RNNoise)"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:125
+msgid "Use as default microphone"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:127
+msgid "Run diagnosis"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:128 src/gf63_mic_fix/ui/window.py:304
+msgid "Test microphone"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:132 src/gf63_mic_fix/ui/window.py:133
+msgid "updated by the system"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:134
+msgid "weekly update check"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:135
+msgid "automatic weekly updates"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:136
+msgid "development copy"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:196
+msgid "Unknown laptop"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:209
+msgid "Removes fan and keyboard noise"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:211
+msgid "Install the package noise-suppression-for-voice"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:262
+msgid "Fix turned off; previous settings restored"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:288
+msgid "Recording… speak now"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:300
+msgid "Playing back…"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:313
+msgid "Run the diagnosis?"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:314
+msgid ""
+"Unplug headphones and turn the volume up. A beep will play for about 2 "
+"seconds."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:317
+msgid "Run"
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:325
+msgid "Defect confirmed. You can turn on the fix now."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:326
+msgid "This laptop does not have the known defect. Nothing was changed."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:328
+msgid ""
+"The beep was not heard. Unplug headphones, turn the volume up and try again."
+msgstr ""
+
+#: src/gf63_mic_fix/ui/window.py:352
+msgid "Fixes the noisy internal microphone of MSI GF63 Thin laptops on Linux."
 msgstr ""
 
 #: src/gf63_mic_fix/updater.py:187

@@ -26,6 +26,9 @@ class FakeRunner(Runner):
 
     def run(self, args, *, input=None, timeout=10):
         self.calls.append(list(args))
+        return self._answer(args, input)
+
+    def _answer(self, args, input):
         matches = [prefix for prefix in self.rules if _starts_with(args, prefix)]
         if not matches:
             return Result(0, "", "")
@@ -119,7 +122,7 @@ class FakeSystem(FakeRunner):
             return Result(0, "", "")
         if a[:2] == ["systemctl", "--user"]:
             return self._systemctl(a[2:])
-        return Result(0, "", "")
+        return self._answer(a, input)
 
     def _systemctl(self, a):
         from gf63_mic_fix import VIRTUAL_SOURCE

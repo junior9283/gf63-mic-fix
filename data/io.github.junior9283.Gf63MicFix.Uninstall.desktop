@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Uninstall GF63 Mic Fix
+Name[pt_BR]=Desinstalar GF63 Mic Fix
+Comment=Undo the microphone fix and remove the program
+Comment[pt_BR]=Desfaz a correção do microfone e remove o programa
+Exec=gf63-mic-fix --uninstall
+Icon=io.github.junior9283.Gf63MicFix
+Terminal=false
+Categories=Settings;HardwareSettings;
+Keywords=uninstall;remove;
+Keywords[pt_BR]=desinstalar;remover;
+StartupNotify=true
