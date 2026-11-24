@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gf63-mic-fix 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/junior9283/gf63-mic-fix/issues\n"
-"POT-Creation-Date: 2026-11-24 14:03-0300\n"
+"POT-Creation-Date: 2026-11-24 14:05-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,6 +16,11 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: src/gf63_mic_fix/diagnose.py:137
+#, python-format
+msgid "Could not record or play sound: %s"
+msgstr ""
 
 #: src/gf63_mic_fix/fix.py:45
 msgid "This laptop is not an MSI GF63 Thin with a Realtek ALC233 codec."
@@ -63,20 +68,20 @@ msgstr ""
 msgid "Noise suppression could not start, so it was turned off."
 msgstr ""
 
-#: src/gf63_mic_fix/updater.py:174
+#: src/gf63_mic_fix/updater.py:187
 msgid "GF63 Mic Fix was updated"
 msgstr ""
 
-#: src/gf63_mic_fix/updater.py:174
+#: src/gf63_mic_fix/updater.py:187
 #, python-format
 msgid "Version %s is now installed."
 msgstr ""
 
-#: src/gf63_mic_fix/updater.py:176
+#: src/gf63_mic_fix/updater.py:189
 #, python-format
 msgid "GF63 Mic Fix %s is available"
 msgstr ""
 
-#: src/gf63_mic_fix/updater.py:176
+#: src/gf63_mic_fix/updater.py:189
 msgid "Download the new version at:"
 msgstr ""

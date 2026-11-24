@@ -1,10 +1,10 @@
 """How this copy was installed. Packaging writes <app dir>/install-type."""
 
 from pathlib import Path
-from typing import Literal
+from typing import Literal, get_args
 
 InstallType = Literal["rpm", "deb", "arch", "universal", "source"]
-KNOWN = ("rpm", "deb", "arch", "universal")
+KNOWN = tuple(k for k in get_args(InstallType) if k != "source")
 
 
 def app_dir() -> Path:

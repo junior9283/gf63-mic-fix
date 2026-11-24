@@ -77,7 +77,9 @@ def _fixer(tmp_path, system):
 def test_run_diagnosis_marks_ok_and_restores_volume(tmp_path):
     system = FakeSystem(volume=54)
     rec = FakeRecorder([stereo(0.5), stereo(0.5, right_tone=0.5, seed=2)])
-    verdict = diagnose.run_diagnosis(_fixer(tmp_path, system), system, recorder=rec, player=lambda r, p: None)
+    verdict = diagnose.run_diagnosis(
+        _fixer(tmp_path, system), system, recorder=rec, player=lambda r, p: StubPlayback()
+    )
     assert verdict is Verdict.DEFECT_CONFIRMED
     assert (tmp_path / "cfg" / DIAGNOSIS_OK).exists()
     assert rec.volumes_seen == [20, 20]  # measured at the fix's gain, not a clipping one
@@ -87,6 +89,48 @@ def test_run_diagnosis_marks_ok_and_restores_volume(tmp_path):
 def test_run_diagnosis_no_defect_writes_nothing(tmp_path):
     system = FakeSystem()
     rec = FakeRecorder([stereo(0.5), stereo(0.5, left_tone=0.5, right_tone=0.5, seed=2)])
-    verdict = diagnose.run_diagnosis(_fixer(tmp_path, system), system, recorder=rec, player=lambda r, p: None)
+    verdict = diagnose.run_diagnosis(
+        _fixer(tmp_path, system), system, recorder=rec, player=lambda r, p: StubPlayback()
+    )
     assert verdict is Verdict.NO_DEFECT
     assert not (tmp_path / "cfg" / DIAGNOSIS_OK).exists()
+
+
+class StubPlayback:
+    def wait(self, timeout=None):
+        return 0
+
+
+def test_record_gives_up_when_recorder_hangs():
+    import subprocess
+    import time
+
+    from conftest import FakeRunner
+
+    class Silent(FakeRunner):
+        def popen(self, args):
+            return subprocess.Popen(["sleep", "30"], stdout=subprocess.PIPE)
+
+    start = time.monotonic()
+    data = diagnose.record(Silent(), PHYS, 0.1, deadline_s=0.5)
+    assert data == b"" and time.monotonic() - start < 3
+
+
+def test_run_diagnosis_without_pw_tools_raises_fix_error(tmp_path):
+    import pytest
+
+    from gf63_mic_fix.fix import FixError
+
+    def missing(*args, **kwargs):
+        raise FileNotFoundError("pw-record")
+
+    system = FakeSystem(volume=54)
+    with pytest.raises(FixError):
+        diagnose.run_diagnosis(
+            _fixer(tmp_path, system), system, recorder=missing, player=lambda r, p: StubPlayback()
+        )
+    assert system.volumes[PHYS] == 54
+
+
+def no_playback(runner, wav):
+    return StubPlayback()

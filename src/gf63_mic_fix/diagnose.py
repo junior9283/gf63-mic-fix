@@ -6,6 +6,7 @@ does not: the left channel is not wired to the microphone.
 """
 
 import math
+import select
 import struct
 import tempfile
 import time
@@ -15,7 +16,8 @@ from enum import Enum
 from pathlib import Path
 
 from . import APPLY_VOLUME
-from .fix import DIAGNOSIS_OK, Fixer
+from .fix import Fixer, FixError
+from .i18n import _
 from .sysrun import Runner
 
 RATE = 48000
@@ -25,6 +27,8 @@ MIN_CHANNEL_GAP_DB = 20.0  # ...and this much more than on the left
 SILENCE_S = 1.5
 TONE_S = 2.0
 SETTLE_S = 0.3  # skip the start of playback
+TAIL_S = 0.2  # stop recording before playback ends
+RECORD_GRACE_S = 3.0  # extra time pw-record gets to deliver the samples
 
 
 class Verdict(Enum):
@@ -34,16 +38,18 @@ class Verdict(Enum):
 
 
 def tone_wav(path: Path, freq=FREQ, seconds=TONE_S, rate=RATE, amplitude=0.3) -> None:
+    """Stereo s16 sine. `rate / freq` must be a whole number of samples (48 for 1 kHz)."""
+    period = round(rate / freq)
+    one = b"".join(
+        struct.pack("<hh", v, v)
+        for v in (int(amplitude * 32767 * math.sin(2 * math.pi * i / period)) for i in range(period))
+    )
     n = int(seconds * rate)
-    frames = bytearray()
-    for i in range(n):
-        v = int(amplitude * 32767 * math.sin(2 * math.pi * freq * i / rate))
-        frames += struct.pack("<hh", v, v)
     with wave.open(str(path), "wb") as w:
         w.setnchannels(2)
         w.setsampwidth(2)
         w.setframerate(rate)
-        w.writeframes(bytes(frames))
+        w.writeframes(one * (n // period) + one[: (n % period) * 4])
 
 
 def goertzel_power(samples: Sequence[float], rate: int, freq: float) -> float:
@@ -79,9 +85,12 @@ def analyse(silence: bytes, tone: bytes, rate: int = RATE) -> tuple[Verdict, flo
     return Verdict.NO_DEFECT, left, right
 
 
-def record(runner: Runner, source: str, seconds: float, rate: int = RATE) -> bytes:
-    """Raw s16 stereo from `source`, read from pw-record's stdout."""
+def record(
+    runner: Runner, source: str, seconds: float, rate: int = RATE, deadline_s: float | None = None
+) -> bytes:
+    """Raw s16 stereo from `source`, read from pw-record's stdout; gives up at the deadline."""
     wanted = int(seconds * rate) * 4
+    deadline = time.monotonic() + (seconds + RECORD_GRACE_S if deadline_s is None else deadline_s)
     p = runner.popen(
         ["pw-record", "--raw", "--target", source, "--channels", "2", "--format", "s16",
          "--rate", str(rate), "-"]
@@ -89,7 +98,10 @@ def record(runner: Runner, source: str, seconds: float, rate: int = RATE) -> byt
     data = bytearray()
     try:
         while len(data) < wanted:
-            chunk = p.stdout.read(wanted - len(data))
+            remaining = deadline - time.monotonic()
+            if remaining <= 0 or not select.select([p.stdout], [], [], remaining)[0]:
+                break
+            chunk = p.stdout.read1(wanted - len(data))
             if not chunk:
                 break
             data += chunk
@@ -117,15 +129,15 @@ def run_diagnosis(
         with tempfile.TemporaryDirectory() as tmp:
             wav = Path(tmp) / "tone.wav"
             tone_wav(wav)
-            proc = player(runner, wav)
-            time.sleep(SETTLE_S if proc is not None else 0)
-            tone = recorder(runner, physical, TONE_S - SETTLE_S - 0.2)
-            if proc is not None:
-                proc.wait(timeout=10)
+            playback = player(runner, wav)
+            time.sleep(SETTLE_S)
+            tone = recorder(runner, physical, TONE_S - SETTLE_S - TAIL_S)
+            playback.wait(timeout=10)
+    except OSError as e:  # pw-record / pw-play missing
+        raise FixError(_("Could not record or play sound: %s") % e) from e
     finally:
         fixer.set_physical_volume(previous)
-    verdict, _, _ = analyse(silence, tone)
+    verdict = analyse(silence, tone)[0]
     if verdict is Verdict.DEFECT_CONFIRMED:
-        fixer.config_dir.mkdir(parents=True, exist_ok=True)
-        (fixer.config_dir / DIAGNOSIS_OK).write_text("")
+        fixer.mark_diagnosed()
     return verdict

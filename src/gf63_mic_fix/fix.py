@@ -7,7 +7,7 @@ from enum import Enum
 from functools import cached_property
 from pathlib import Path
 
-from . import APPLY_VOLUME, CONFIG_DIR, GAIN_MAX, GAIN_MIN, SERVICE, VIRTUAL_SOURCE, state
+from . import APPLY_VOLUME, CONFIG_DIR, GAIN_MAX, GAIN_MIN, SERVICE, VIRTUAL_SOURCE, format_version, state
 from .hardware import (
     MIN_PIPEWIRE,
     Hardware,
@@ -45,7 +45,7 @@ def blocking_message(st: Status) -> str | None:
         Status.UNSUPPORTED: _("This laptop is not an MSI GF63 Thin with a Realtek ALC233 codec."),
         Status.NO_PIPEWIRE: _("PipeWire is not the sound server. This fix needs PipeWire."),
         Status.OLD_PIPEWIRE: _("PipeWire is too old. Version %s or newer is required.")
-        % ".".join(map(str, MIN_PIPEWIRE)),
+        % format_version(MIN_PIPEWIRE),
         Status.NEEDS_DIAGNOSIS: _("Run the diagnosis first: this GF63 variant has not been verified yet."),
     }.get(st)
 
@@ -205,6 +205,11 @@ class Fixer:
             else:
                 state.discard(self.config_dir)
                 (self.config_dir / CONF_FILE).unlink(missing_ok=True)
+
+    def mark_diagnosed(self) -> None:
+        """Records that the diagnosis confirmed the known defect on this laptop."""
+        self.config_dir.mkdir(parents=True, exist_ok=True)
+        (self.config_dir / DIAGNOSIS_OK).write_text("")
 
     def make_default(self) -> None:
         self._pactl("set-default-source", VIRTUAL_SOURCE)

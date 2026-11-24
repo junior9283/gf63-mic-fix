@@ -14,13 +14,14 @@ import urllib.request
 from collections.abc import Callable
 from pathlib import Path
 
-from . import APP_ID, __version__
+from . import APP_ID, __version__, format_version
 from .i18n import _
 from .install_type import app_dir, install_type
 from .sysrun import Runner
 
 REPO = "junior9283/gf63-mic-fix"
 API_LATEST = f"https://api.github.com/repos/{REPO}/releases/latest"
+DOWNLOAD_PREFIX = f"https://github.com/{REPO}/releases/download/"
 SIGNING_FINGERPRINT = ""  # filled in when the signing key is created; empty disables self-update
 
 log = logging.getLogger(__name__)
@@ -32,6 +33,11 @@ def parse_version(tag: str) -> tuple[int, int, int]:
     if len(parts) != 3 or not all(p.isdigit() for p in parts):
         raise ValueError(f"not a version: {tag!r}")
     return tuple(int(p) for p in parts)
+
+
+def can_self_update() -> bool:
+    """Self-update needs the pinned signing key and gpg to check it."""
+    return bool(SIGNING_FINGERPRINT) and shutil.which("gpg") is not None
 
 
 def urllib_fetch(url: str) -> bytes:
@@ -104,18 +110,24 @@ def self_update_universal(
     fetch: Fetch = urllib_fetch,
     verifier: Callable[..., bool] = verify_signature,
 ) -> bool:
-    """Downloads, verifies and installs a release. Any failure leaves the current install as is."""
-    version = ".".join(map(str, release["version"]))
-    name = f"gf63-mic-fix-{version}.tar.gz"
-    assets = release["assets"]
-    if name not in assets or name + ".asc" not in assets:
+    """Downloads, verifies and installs a release. Any failure leaves the current install as is.
+
+    The announced version is bound to signed content: the archive's top directory must be
+    gf63-mic-fix-<version>, so an older signed release cannot be replayed under a newer number.
+    """
+    if release["version"] <= parse_version(__version__):
         return False
-    with tempfile.TemporaryDirectory() as tmp:
-        tmp = Path(tmp)
+    version = format_version(release["version"])
+    name = f"gf63-mic-fix-{version}.tar.gz"
+    urls = [release["assets"].get(name), release["assets"].get(name + ".asc")]
+    if not all(u and u.startswith(DOWNLOAD_PREFIX) for u in urls):
+        return False
+    with tempfile.TemporaryDirectory() as d:
+        tmp = Path(d)
         tar, sig = tmp / name, tmp / (name + ".asc")
         try:
-            tar.write_bytes(fetch(assets[name]))
-            sig.write_bytes(fetch(assets[name + ".asc"]))
+            tar.write_bytes(fetch(urls[0]))
+            sig.write_bytes(fetch(urls[1]))
         except Exception as e:
             log.info("download failed: %s", e)
             return False
@@ -127,10 +139,11 @@ def self_update_universal(
         except (ValueError, tarfile.TarError) as e:
             log.warning("bad archive %s: %s", name, e)
             return False
-        tops = [p for p in (tmp / "x").iterdir() if p.is_dir()]
-        if len(tops) != 1 or not (tops[0] / "install.sh").is_file():
+        top = tmp / "x" / f"gf63-mic-fix-{version}"
+        if [p.name for p in (tmp / "x").iterdir()] != [top.name] or not (top / "install.sh").is_file():
+            log.warning("archive %s does not contain %s/install.sh; not installing", name, top.name)
             return False
-        return runner.run(["sh", str(tops[0] / "install.sh"), "--from-dir", str(tops[0])], timeout=120).ok
+        return runner.run(["sh", str(top / "install.sh"), "--from-dir", str(top)], timeout=120).ok
 
 
 def notify(title: str, body: str, url: str) -> None:
@@ -167,9 +180,9 @@ def run_scheduled(
     release = latest_release(fetch)
     if not release or release["version"] <= parse_version(__version__):
         return
-    version = ".".join(map(str, release["version"]))
+    version = format_version(release["version"])
     url = release["html_url"]
-    if kind == "universal" and SIGNING_FINGERPRINT and shutil.which("gpg"):
+    if kind == "universal" and can_self_update():
         if updater(release, runner or Runner(), fetch):
             notifier(_("GF63 Mic Fix was updated"), _("Version %s is now installed.") % version, url)
             return

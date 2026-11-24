@@ -50,7 +50,10 @@ def main(argv: list[str] | None = None, fixer: Fixer | None = None) -> int:
         print(st.name)
         return EXIT_CODES[st]
     try:
-        fixer.apply() if args.apply else fixer.undo()
+        if args.apply:
+            fixer.apply()
+        else:
+            fixer.undo()
     except FixError as e:
         print(e, file=sys.stderr)
         return 1

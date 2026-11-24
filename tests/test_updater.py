@@ -130,18 +130,18 @@ def test_safe_extract_rejects_link_outside(tmp_path):
         updater.safe_extract(tmp_path / "x.tar.gz", tmp_path / "out")
 
 
-def _fake_release_files(tmp_path, script):
-    _tar(tmp_path / "rel.tar.gz", [("gf63-mic-fix-9.0.0/install.sh", script.encode())])
-    files = {
-        "https://x/gf63-mic-fix-9.0.0.tar.gz": (tmp_path / "rel.tar.gz").read_bytes(),
-        "https://x/gf63-mic-fix-9.0.0.tar.gz.asc": b"sig",
-    }
+DL = "https://github.com/junior9283/gf63-mic-fix/releases/download/v9.0.0/"
+
+
+def _fake_release_files(tmp_path, script, top="gf63-mic-fix-9.0.0", base=DL, version=(9, 0, 0)):
+    _tar(tmp_path / "rel.tar.gz", [(f"{top}/install.sh", script.encode())])
+    name = "gf63-mic-fix-" + ".".join(map(str, version)) + ".tar.gz"
+    files = {base + name: (tmp_path / "rel.tar.gz").read_bytes(), base + name + ".asc": b"sig"}
     release = {
-        "version": (9, 0, 0),
-        "html_url": "https://x",
-        "assets": {"gf63-mic-fix-9.0.0.tar.gz": "https://x/gf63-mic-fix-9.0.0.tar.gz",
-                   "gf63-mic-fix-9.0.0.tar.gz.asc": "https://x/gf63-mic-fix-9.0.0.tar.gz.asc"},
-    }  # fmt: skip
+        "version": version,
+        "html_url": "https://github.com/junior9283/gf63-mic-fix/releases/tag/v9.0.0",
+        "assets": {name: base + name, name + ".asc": base + name + ".asc"},
+    }
     return release, files.__getitem__
 
 
@@ -201,3 +201,29 @@ def test_verify_signature_rejects_wrong_key_and_tampering(tmp_path, signing_key)
     assert not updater.verify_signature(f, tmp_path / "file.asc", pub, Runner(), fingerprint="")
     f.write_bytes(b"tampered")
     assert not updater.verify_signature(f, tmp_path / "file.asc", pub, Runner(), fingerprint=fpr)
+
+
+def test_self_update_rejects_renamed_old_release(tmp_path):
+    """An old signed archive announced under a newer version number must not install."""
+    marker = tmp_path / "installed"
+    release, fetch = _fake_release_files(tmp_path, f"#!/bin/sh\ntouch {marker}\n", top="gf63-mic-fix-0.9.0")
+    assert updater.self_update_universal(release, Runner(), fetch, verifier=lambda *a: True) is False
+    assert not marker.exists()
+
+
+def test_self_update_rejects_foreign_download_url(tmp_path):
+    marker = tmp_path / "installed"
+    release, fetch = _fake_release_files(
+        tmp_path, f"#!/bin/sh\ntouch {marker}\n", base="https://evil.example/"
+    )
+    assert updater.self_update_universal(release, Runner(), fetch, verifier=lambda *a: True) is False
+    assert not marker.exists()
+
+
+def test_self_update_rejects_not_newer(tmp_path):
+    marker = tmp_path / "installed"
+    release, fetch = _fake_release_files(
+        tmp_path, f"#!/bin/sh\ntouch {marker}\n", top="gf63-mic-fix-0.0.1", version=(0, 0, 1)
+    )
+    assert updater.self_update_universal(release, Runner(), fetch, verifier=lambda *a: True) is False
+    assert not marker.exists()

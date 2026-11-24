@@ -18,3 +18,7 @@ GAIN_MIN, GAIN_MAX = 10, 30  # % (0 to +28 dB); above this the capture clips
 PRIORITY = 3000
 
 CONFIG_DIR = Path.home() / ".config" / "gf63-mic-fix"
+
+
+def format_version(v: tuple[int, ...]) -> str:
+    return ".".join(map(str, v))
