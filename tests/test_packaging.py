@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from gf63_mic_fix import updater
+from gf63_mic_fix import __version__, updater
 from gf63_mic_fix.uninstall import UNIVERSAL_PATHS, _remove_universal
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -110,7 +110,7 @@ def test_installed_launcher_runs_from_the_user_copy(release, sandbox):
         [str(home / ".local/bin/gf63-mic-fix"), "--version"], env=env, capture_output=True, text=True
     )
     assert r.returncode == 0, r.stderr
-    assert "1.0.0" in r.stdout
+    assert r.stdout.strip() == __version__
 
 
 def test_apt_source_keeps_its_key_after_apt_remove():
@@ -121,3 +121,54 @@ def test_apt_source_keeps_its_key_after_apt_remove():
     assert key.startswith("/etc/")
     nfpm = (ROOT / "packaging/nfpm.yaml").read_text()
     assert f"dst: {key}\n    type: config\n    packager: deb" in nfpm
+
+
+def test_installer_explains_a_release_without_version(tmp_path, sandbox):
+    _, env, _ = sandbox
+    bad = tmp_path / "release.json"
+    bad.write_text('{"html_url": "https://example.invalid"}')
+    r = subprocess.run(
+        ["sh", str(INSTALL)], env={**env, "GF63_API_URL": bad.as_uri()}, capture_output=True, text=True
+    )
+    assert r.returncode == 1
+    assert "Traceback" not in r.stderr
+    assert "unexpected release data" in r.stderr
+
+
+POSTREMOVE = ROOT / "packaging/postremove.sh"
+
+
+@pytest.fixture
+def user_links(tmp_path):
+    """A user whose enabled units outlived the removed package, plus a healthy link."""
+    units = tmp_path / "home/ana/.config/systemd/user"
+    (units / "pipewire.service.wants").mkdir(parents=True)
+    (units / "timers.target.wants").mkdir()
+    dead = [
+        units / "pipewire.service.wants/gf63-mic-fix.service",
+        units / "timers.target.wants/gf63-mic-fix-update.timer",
+    ]
+    for link in dead:
+        link.symlink_to(tmp_path / "usr/lib/systemd/user" / link.name)  # target is gone
+    healthy = units / "pipewire.service.wants/other.service"
+    healthy.symlink_to(POSTREMOVE)
+    return tmp_path, dead, healthy
+
+
+@pytest.mark.parametrize("arg", ["0", "remove", "purge", ""])
+def test_postremove_cleans_dangling_links_on_removal(user_links, arg):
+    root, dead, healthy = user_links
+    subprocess.run(["sh", str(POSTREMOVE), arg], env={**os.environ, "GF63_ROOT": str(root)}, check=True)
+    assert not any(p.is_symlink() for p in dead)
+    assert healthy.is_symlink()
+
+
+@pytest.mark.parametrize("arg", ["1", "upgrade", "failed-upgrade"])
+def test_postremove_keeps_links_on_upgrade(user_links, arg):
+    root, dead, _ = user_links
+    subprocess.run(["sh", str(POSTREMOVE), arg], env={**os.environ, "GF63_ROOT": str(root)}, check=True)
+    assert all(p.is_symlink() for p in dead)
+
+
+def test_packages_run_the_postremove_cleanup():
+    assert "postremove: packaging/postremove.sh" in (ROOT / "packaging/nfpm.yaml").read_text()

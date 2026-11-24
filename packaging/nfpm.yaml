@@ -72,6 +72,9 @@ contents:
     dst: /usr/lib/systemd/user/gf63-mic-fix-update.timer
     packager: archlinux
 
+scripts:
+  postremove: packaging/postremove.sh
+
 overrides:
   rpm:
     depends:

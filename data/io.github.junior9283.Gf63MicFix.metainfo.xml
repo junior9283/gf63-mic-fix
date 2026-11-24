@@ -35,6 +35,9 @@
     <control>touch</control>
   </supports>
   <releases>
+    <release version="1.0.1" date="2026-11-24">
+      <description><p>Fixes for turning the fix off and on, package removal and self-update.</p></description>
+    </release>
     <release version="1.0.0" date="2026-11-24">
       <description><p>First release.</p></description>
     </release>

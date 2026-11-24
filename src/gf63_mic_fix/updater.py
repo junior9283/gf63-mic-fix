@@ -98,8 +98,10 @@ def safe_extract(tar: Path, dest: Path) -> None:
         members = t.getmembers()
         for m in members:
             _check_member(m, dest)
+        # Python < 3.11.4 has no extraction filters; _check_member above is the guard there.
+        kw = {"filter": "data"} if hasattr(tarfile, "data_filter") else {}
         try:
-            t.extractall(dest, members=members, filter="data")
+            t.extractall(dest, members=members, **kw)
         except tarfile.FilterError as e:
             raise ValueError(str(e)) from e
 

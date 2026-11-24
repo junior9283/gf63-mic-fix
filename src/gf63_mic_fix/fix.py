@@ -152,7 +152,8 @@ class Fixer:
             raise FixError(msg)
         physical = self.physical_source()
         saved = state.load(self.config_dir)
-        if saved is None:
+        first_time = saved is None
+        if first_time:
             # Remember the system as it was, unless it already points at our source.
             default = self._default()
             saved = (
@@ -170,7 +171,8 @@ class Fixer:
             self.undo()
             raise FixError(_("The fixed microphone did not start. Nothing was changed."))
         self.make_default()
-        self._set_volume(physical, APPLY_VOLUME)
+        if first_time:  # applying again keeps the gain chosen with the slider
+            self._set_volume(physical, APPLY_VOLUME)
 
     def set_noise_suppression(self, on: bool) -> None:
         plugin = self._plugin(on)
@@ -195,12 +197,23 @@ class Fixer:
     def undo(self, purge: bool = False) -> None:
         """Puts the system back as it was. Always stops the service and forgets the saved state."""
         try:
+            ours = self._default() == VIRTUAL_SOURCE
             self._systemctl("disable", "--now", SERVICE)
-            saved = state.load(self.config_dir)
-            if saved and saved.default_source and saved.default_source in self._sources():
+            saved = state.load(self.config_dir) or state.SavedState(None, None)
+            restored = saved.default_source in self._sources() if saved.default_source else False
+            if restored:
                 self._pactl("set-default-source", saved.default_source)
-                if saved.physical_volume_percent is not None:
-                    self._set_volume(self.physical_source(), saved.physical_volume_percent)
+            # The saved input is gone (or was never saved): never leave apps on a removed mic.
+            point_at_mic = ours and not restored
+            if point_at_mic or saved.physical_volume_percent is not None:
+                try:
+                    physical = self.physical_source()
+                except FixError:
+                    physical = None
+                if physical and point_at_mic:
+                    self._pactl("set-default-source", physical)
+                if physical and saved.physical_volume_percent is not None:
+                    self._set_volume(physical, saved.physical_volume_percent)
         finally:
             if purge:
                 state.clear(self.config_dir)

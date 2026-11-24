@@ -110,8 +110,9 @@ def test_undo_without_state_is_safe(tmp_path, system):
 def test_undo_when_saved_default_missing(tmp_path, system):
     state.save(tmp_path / "cfg", state.SavedState("alsa_input.usb-headset", 54))
     fixer(tmp_path, system).undo()
+    # The fix was not active, so the default is left alone; the saved volume still comes back.
     assert not system.called("pactl", "set-default-source")
-    assert not system.called("pactl", "set-source-volume")
+    assert system.volumes[PHYS] == 54
 
 
 def test_undo_keeps_diagnosis(tmp_path, system):
@@ -192,3 +193,34 @@ def test_apply_drops_noise_suppression_whose_plugin_was_removed(tmp_path, system
     assert f.status() is Status.FIXED
     assert state.load(tmp_path / "cfg").noise_suppression is False
     assert "rnnoise" not in (tmp_path / "cfg" / "pipewire.conf").read_text().lower()
+
+
+def test_undo_points_apps_back_to_the_mic_when_the_saved_source_is_gone(tmp_path):
+    system = FakeSystem(default="alsa_input.usb-headset")  # unplugged since the fix was applied
+    f = fixer(tmp_path, system)
+    f.apply()
+    f.undo()
+    assert system.default == PHYS
+    assert system.volumes[PHYS] == 54
+
+
+def test_undo_without_saved_state_still_clears_our_default(tmp_path, system):
+    f = fixer(tmp_path, system)
+    f.apply()
+    state.discard(tmp_path / "cfg")  # e.g. the file was lost or corrupted
+    f.undo()
+    assert system.default == PHYS
+
+
+def test_undo_when_never_fixed_leaves_the_default_alone(tmp_path):
+    system = FakeSystem(default="alsa_input.usb-headset")
+    fixer(tmp_path, system).undo()
+    assert system.default == "alsa_input.usb-headset"
+
+
+def test_apply_again_keeps_the_chosen_gain(tmp_path, system):
+    f = fixer(tmp_path, system)
+    f.apply()
+    f.set_gain(27)
+    f.apply()
+    assert system.volumes[PHYS] == 27

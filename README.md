@@ -42,20 +42,20 @@ Pick your distribution. Every package is signed (see [Verifying downloads](#veri
 **Fedora, Nobara** (rpm; updates come through `dnf` and the Software app)
 
 ```sh
-sudo dnf install https://github.com/junior9283/gf63-mic-fix/releases/download/v1.0.0/gf63-mic-fix-1.0.0-1.noarch.rpm
+sudo dnf install https://github.com/junior9283/gf63-mic-fix/releases/download/v1.0.1/gf63-mic-fix-1.0.1-1.noarch.rpm
 ```
 
 **Ubuntu, Linux Mint, Zorin OS, Pop!_OS, Debian** (deb; updates come through `apt` and the Update Manager)
 
 ```sh
-wget https://github.com/junior9283/gf63-mic-fix/releases/download/v1.0.0/gf63-mic-fix_1.0.0-1_all.deb
-sudo apt install ./gf63-mic-fix_1.0.0-1_all.deb
+wget https://github.com/junior9283/gf63-mic-fix/releases/download/v1.0.1/gf63-mic-fix_1.0.1-1_all.deb
+sudo apt install ./gf63-mic-fix_1.0.1-1_all.deb
 ```
 
 **Arch, Manjaro, EndeavourOS** (the app checks GitHub weekly and tells you when a new version is out)
 
 ```sh
-sudo pacman -U https://github.com/junior9283/gf63-mic-fix/releases/download/v1.0.0/gf63-mic-fix-1.0.0-1-any.pkg.tar.zst
+sudo pacman -U https://github.com/junior9283/gf63-mic-fix/releases/download/v1.0.1/gf63-mic-fix-1.0.1-1-any.pkg.tar.zst
 ```
 
 or build it yourself with the `PKGBUILD` attached to the [release](https://github.com/junior9283/gf63-mic-fix/releases/latest) (`makepkg -si`).
@@ -142,7 +142,7 @@ key is [`data/signing-key.asc`](data/signing-key.asc), fingerprint:
 
 ```sh
 gpg --import signing-key.asc
-gpg --verify gf63-mic-fix-1.0.0.tar.gz.asc gf63-mic-fix-1.0.0.tar.gz
+gpg --verify gf63-mic-fix-1.0.1.tar.gz.asc gf63-mic-fix-1.0.1.tar.gz
 ```
 
 ## Limitations
@@ -161,7 +161,7 @@ git clone https://github.com/junior9283/gf63-mic-fix && cd gf63-mic-fix
 python3 -m venv --system-site-packages .venv && .venv/bin/pip install pytest ruff
 .venv/bin/pytest -q                     # unit tests, plus the window rendered off-screen
 GF63_MIC_FIX_APPDIR=$PWD/src bin/gf63-mic-fix   # run from the source tree
-packaging/build.sh 1.0.0 dist/          # rpm, deb, Arch package and install.sh tarball (needs nfpm)
+packaging/build.sh 1.0.1 dist/          # rpm, deb, Arch package and install.sh tarball (needs nfpm)
 ```
 
 Translations live in [`po/`](po/); run `scripts/update-po.sh` after changing texts.

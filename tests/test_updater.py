@@ -227,3 +227,24 @@ def test_self_update_rejects_not_newer(tmp_path):
     )
     assert updater.self_update_universal(release, Runner(), fetch, verifier=lambda *a: True) is False
     assert not marker.exists()
+
+
+def test_safe_extract_without_data_filter(tmp_path, monkeypatch):
+    # Python 3.11.0-3.11.3: no tarfile.data_filter, and extractall() rejects `filter=`.
+    import tarfile
+
+    real = tarfile.TarFile.extractall
+
+    def old_extractall(self, path=".", members=None, **kw):
+        if "filter" in kw:
+            raise TypeError("extractall() got an unexpected keyword argument 'filter'")
+        return real(self, path, members, filter="fully_trusted")
+
+    monkeypatch.delattr(tarfile, "data_filter")
+    monkeypatch.setattr(tarfile.TarFile, "extractall", old_extractall)
+    _tar(tmp_path / "good.tar.gz", [("gf63-mic-fix-9.9.9/install.sh", b"echo")])
+    updater.safe_extract(tmp_path / "good.tar.gz", tmp_path / "x")
+    assert (tmp_path / "x/gf63-mic-fix-9.9.9/install.sh").read_bytes() == b"echo"
+    _tar(tmp_path / "bad.tar.gz", [("../evil", b"x")])
+    with pytest.raises(ValueError):
+        updater.safe_extract(tmp_path / "bad.tar.gz", tmp_path / "y")

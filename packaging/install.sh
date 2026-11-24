@@ -74,10 +74,10 @@ with urllib.request.urlopen(req, timeout=60) as r, open(sys.argv[2], "wb") as f:
 }
 
 if [ -z "$from_dir" ]; then
-    fetch "https://api.github.com/repos/$REPO/releases/latest" "$work/release.json" ||
+    fetch "${GF63_API_URL:-https://api.github.com/repos/$REPO/releases/latest}" "$work/release.json" ||
         die "could not reach GitHub"
     version=$(python3 -I -c 'import json, sys; print(json.load(open(sys.argv[1]))["tag_name"].lstrip("v"))' \
-        "$work/release.json")
+        "$work/release.json" 2>/dev/null) || die "unexpected release data from GitHub; try again later"
     case $version in *[!0-9.]* | "") die "unexpected release version: $version" ;; esac
     name=gf63-mic-fix-$version.tar.gz
     base=https://github.com/$REPO/releases/download/v$version

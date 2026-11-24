@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [1.0.1] - 2026-11-24
+
+### Fixed
+
+- Turning the fix off now points apps back to the built-in microphone when the input saved before
+  the fix is gone (for example, an unplugged headset), and restores the saved volume in that case too.
+- Turning the fix on again while it is already on keeps the gain chosen with the slider.
+- Removing the package no longer leaves broken systemd links in users' home folders.
+- The weekly self-update works on Python 3.11.0-3.11.3.
+- install.sh explains an unexpected answer from GitHub instead of showing a Python error.
+
 ## [1.0.0] - 2026-11-24
 
 ### Added
@@ -22,4 +33,5 @@ All notable changes to this project are documented here. The format follows
   (install.sh) / notification (Arch).
 - English and Brazilian Portuguese.
 
+[1.0.1]: https://github.com/junior9283/gf63-mic-fix/releases/tag/v1.0.1
 [1.0.0]: https://github.com/junior9283/gf63-mic-fix/releases/tag/v1.0.0

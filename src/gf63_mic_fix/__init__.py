@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
 APP_ID = "io.github.junior9283.Gf63MicFix"
 PACKAGE = "gf63-mic-fix"
