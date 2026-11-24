@@ -1,24 +1,8 @@
 import json
 
-from conftest import FakeRunner
+from conftest import ALC233, HDMI, FakeRunner, make_root
 from gf63_mic_fix import hardware
 from gf63_mic_fix.sysrun import Result
-
-ALC233 = "Codec: Realtek ALC233\nAddress: 0\nVendor Id: 0x10ec0235\nSubsystem Id: 0x146212f4\n"
-HDMI = "Codec: Intel Kabylake HDMI\nVendor Id: 0x8086280b\n"
-
-
-def make_root(tmp_path, product, codecs):
-    """codecs: {card_index: [codec file contents]}"""
-    dmi = tmp_path / "sys/class/dmi/id"
-    dmi.mkdir(parents=True)
-    (dmi / "product_name").write_text(product + "\n")
-    for card, files in codecs.items():
-        d = tmp_path / f"proc/asound/card{card}"
-        d.mkdir(parents=True)
-        for i, text in enumerate(files):
-            (d / f"codec#{i}").write_text(text)
-    return tmp_path
 
 
 def test_detect_verified_10sc(tmp_path):
@@ -43,7 +27,7 @@ def test_detect_gf63_without_alc233_unsupported(tmp_path):
 
 
 def test_detect_missing_dmi(tmp_path):
-    hw = hardware.detect_hardware(tmp_path)
+    hw = hardware.detect_hardware(make_root(tmp_path, product=None, codecs={}))
     assert not hw.supported and hw.product == ""
 
 

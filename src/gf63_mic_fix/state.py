@@ -32,5 +32,10 @@ def save(dir: Path, s: SavedState) -> None:
     os.replace(tmp, dir / STATE_FILE)
 
 
+def discard(dir: Path) -> None:
+    (dir / STATE_FILE).unlink(missing_ok=True)
+
+
 def clear(dir: Path) -> None:
+    """Removes the whole config dir (uninstall)."""
     shutil.rmtree(dir, ignore_errors=True)

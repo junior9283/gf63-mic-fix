@@ -1,0 +1,15 @@
+[Unit]
+Description=GF63 Mic Fix (internal microphone filter)
+Documentation=https://github.com/junior9283/gf63-mic-fix
+After=pipewire.service pipewire-pulse.service wireplumber.service
+BindsTo=pipewire.service
+ConditionPathExists=%h/.config/gf63-mic-fix/pipewire.conf
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pipewire -c %h/.config/gf63-mic-fix/pipewire.conf
+Restart=on-failure
+Slice=session.slice
+
+[Install]
+WantedBy=pipewire.service

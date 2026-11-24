@@ -20,12 +20,18 @@ LADSPA_DIRS = (
 )
 
 
-@dataclass
+@dataclass(frozen=True)
 class Hardware:
     product: str
-    verified: bool
     codec_card: int | None
-    supported: bool
+
+    @property
+    def verified(self) -> bool:
+        return self.product in VERIFIED_PRODUCTS
+
+    @property
+    def supported(self) -> bool:
+        return self.product.startswith(PRODUCT_PREFIX) and self.codec_card is not None
 
 
 def _read(path: Path) -> str:
@@ -43,14 +49,7 @@ def _alc233_card(root: Path) -> int | None:
 
 
 def detect_hardware(root: Path = Path("/")) -> Hardware:
-    product = _read(root / "sys/class/dmi/id/product_name").strip()
-    card = _alc233_card(root)
-    return Hardware(
-        product=product,
-        verified=product in VERIFIED_PRODUCTS,
-        codec_card=card,
-        supported=product.startswith(PRODUCT_PREFIX) and card is not None,
-    )
+    return Hardware(_read(root / "sys/class/dmi/id/product_name").strip(), _alc233_card(root))
 
 
 def pipewire_version(runner: Runner) -> tuple[int, int, int] | None:
@@ -59,16 +58,23 @@ def pipewire_version(runner: Runner) -> tuple[int, int, int] | None:
     return tuple(int(g) for g in m.groups()) if m else None
 
 
+def list_sources(runner: Runner) -> list[dict]:
+    """All sources as pactl reports them; [] if the sound server cannot be queried.
+
+    Note: pactl's JSON output replaces non-ASCII descriptions with "(null)", so callers
+    must never rely on descriptions.
+    """
+    r = runner.run(["pactl", "-f", "json", "list", "sources"])
+    try:
+        sources = json.loads(r.stdout) if r.ok else []
+    except ValueError:
+        return []
+    return sources if isinstance(sources, list) else []
+
+
 def find_physical_source(runner: Runner, card: int) -> str | None:
     """The capture source of the ALC233 card, found by card index, never by a fixed name."""
-    r = runner.run(["pactl", "-f", "json", "list", "sources"])
-    if not r.ok:
-        return None
-    try:
-        sources = json.loads(r.stdout)
-    except ValueError:
-        return None
-    for s in sources:
+    for s in list_sources(runner):
         props = s.get("properties", {})
         card_prop = props.get("alsa.card", props.get("api.alsa.card"))
         if card_prop == str(card) and props.get("device.class") == "sound" and not s.get("monitor_source"):
