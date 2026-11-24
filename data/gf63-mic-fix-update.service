@@ -1,0 +1,8 @@
+[Unit]
+Description=GF63 Mic Fix update check
+Documentation=https://github.com/junior9283/gf63-mic-fix
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/gf63-mic-fix --check-update

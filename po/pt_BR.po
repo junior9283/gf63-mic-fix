@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gf63-mic-fix 1.0.0\n"
 "Report-Msgid-Bugs-To: https://github.com/junior9283/gf63-mic-fix/issues\n"
-"POT-Creation-Date: 2026-11-24 14:01-0300\n"
+"POT-Creation-Date: 2026-11-24 14:03-0300\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -57,3 +57,21 @@ msgstr "O microfone corrigido não iniciou. Nada foi alterado."
 #: src/gf63_mic_fix/fix.py:191
 msgid "Noise suppression could not start, so it was turned off."
 msgstr "A supressão de ruído não conseguiu iniciar e foi desligada."
+
+#: src/gf63_mic_fix/updater.py:174
+msgid "GF63 Mic Fix was updated"
+msgstr "O GF63 Mic Fix foi atualizado"
+
+#: src/gf63_mic_fix/updater.py:174
+#, python-format
+msgid "Version %s is now installed."
+msgstr "A versão %s está instalada."
+
+#: src/gf63_mic_fix/updater.py:176
+#, python-format
+msgid "GF63 Mic Fix %s is available"
+msgstr "O GF63 Mic Fix %s está disponível"
+
+#: src/gf63_mic_fix/updater.py:176
+msgid "Download the new version at:"
+msgstr "Baixe a nova versão em:"
