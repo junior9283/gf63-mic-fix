@@ -1,5 +1,3 @@
-import threading
-
 import gi
 
 gi.require_version("Gtk", "4.0")
@@ -11,6 +9,7 @@ from .. import APP_ID, UPDATE_TIMER  # noqa: E402
 from ..fix import Fixer  # noqa: E402
 from ..install_type import install_type  # noqa: E402
 from ..sysrun import Runner  # noqa: E402
+from .tasks import run_in_thread  # noqa: E402
 from .window import MainWindow  # noqa: E402
 
 
@@ -27,8 +26,7 @@ class App(Adw.Application):
         if self.start_with_uninstall:
             win.ask_uninstall()
         if install_type() in ("arch", "universal"):
-            cmd = ["systemctl", "--user", "enable", "--now", UPDATE_TIMER]
-            threading.Thread(target=self.runner.run, args=(cmd,), daemon=True).start()
+            run_in_thread(lambda: self.runner.run(["systemctl", "--user", "enable", "--now", UPDATE_TIMER]))
 
 
 def run(

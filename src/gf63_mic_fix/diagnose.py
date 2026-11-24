@@ -45,11 +45,16 @@ def tone_wav(path: Path, freq=FREQ, seconds=TONE_S, rate=RATE, amplitude=0.3) ->
         for v in (int(amplitude * 32767 * math.sin(2 * math.pi * i / period)) for i in range(period))
     )
     n = int(seconds * rate)
+    write_wav(path, one * (n // period) + one[: (n % period) * 4], rate)
+
+
+def write_wav(path: Path, pcm: bytes, rate=RATE) -> None:
+    """Interleaved stereo s16 LE (what `record` returns) as a WAV file."""
     with wave.open(str(path), "wb") as w:
         w.setnchannels(2)
         w.setsampwidth(2)
         w.setframerate(rate)
-        w.writeframes(one * (n // period) + one[: (n % period) * 4])
+        w.writeframes(pcm)
 
 
 def goertzel_power(samples: Sequence[float], rate: int, freq: float) -> float:

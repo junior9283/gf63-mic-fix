@@ -1,8 +1,6 @@
 """The single window: status, live level, fix switch, gain, noise suppression, test."""
 
 import tempfile
-import threading
-import wave
 from pathlib import Path
 
 from gi.repository import Adw, Gio, GLib, Gtk
@@ -14,24 +12,14 @@ from ..i18n import _
 from ..install_type import install_type
 from ..meter import LevelMeter
 from ..sysrun import Runner
+from .tasks import on_main, run_in_thread
 from .uninstall import UninstallFlow
 
 TEST_SECONDS = 5.0
 
 
-def run_in_thread(work, done):
-    """Runs work() off the main loop, then done(result, error) back on it."""
-
-    def target():
-        try:
-            result, error = work(), None
-        except Exception as e:  # shown to the user as a toast
-            result, error = None, e
-        GLib.idle_add(lambda: done(result, error) and False)
-
-    threading.Thread(target=target, daemon=True).start()
-
-
+FIXED = frozenset({Status.FIXED, Status.FIXED_NOT_DEFAULT})
+USABLE = FIXED | {Status.NOT_FIXED}  # the hardware is fine: show the controls
 ICON_STYLE = {Status.FIXED: "success", Status.FIXED_NOT_DEFAULT: "warning", Status.NEEDS_DIAGNOSIS: "accent"}
 
 
@@ -182,10 +170,9 @@ class MainWindow(Adw.ApplicationWindow):
     def refresh(self):
         def work():
             st = self.fixer.status()
-            gain = None
-            if st in (Status.FIXED, Status.FIXED_NOT_DEFAULT, Status.NOT_FIXED):
-                gain = self.fixer.get_gain()
-            return st, gain, self.fixer.noise_suppression()
+            if st not in USABLE:
+                return st, None, False, None
+            return st, self.fixer.get_gain(), self.fixer.noise_suppression(), self._meter_source(st)
 
         run_in_thread(work, self._apply_state)
 
@@ -193,7 +180,7 @@ class MainWindow(Adw.ApplicationWindow):
         if error:
             self.toast(str(error))
             return
-        st, gain, noise = result
+        st, gain, noise, meter_source = result
         self.status = st
         icon, title, desc = _status_text(st, self.fixer.hardware.product)
         self.icon.set_from_icon_name(icon)
@@ -205,8 +192,7 @@ class MainWindow(Adw.ApplicationWindow):
             f"{hw.product or _('Unknown laptop')} · Realtek ALC233" if hw.supported else ""
         )
 
-        usable = st in (Status.FIXED, Status.FIXED_NOT_DEFAULT, Status.NOT_FIXED)
-        fixed = st in (Status.FIXED, Status.FIXED_NOT_DEFAULT)
+        usable, fixed = st in USABLE, st in FIXED
         self._syncing = True
         self.controls.set_visible(usable)
         self.fix_row.set_active(fixed)
@@ -225,21 +211,27 @@ class MainWindow(Adw.ApplicationWindow):
         self.diag_button.set_visible(st is Status.NEEDS_DIAGNOSIS)
         self.test_button.set_visible(usable)
         self._busy(False)
-        self._restart_meter(VIRTUAL_SOURCE if fixed else None)
+        self._restart_meter(meter_source)
         if self.on_ready:
             self.on_ready(self)
 
     # --- meter --------------------------------------------------------------------------
-    def _restart_meter(self, source):
-        self._stop_meter()
-        if self.status not in (Status.FIXED, Status.FIXED_NOT_DEFAULT, Status.NOT_FIXED):
-            return
+    def _meter_source(self, st: Status) -> str | None:
+        """Runs in the worker thread: physical_source() calls pactl."""
+        if st in FIXED:
+            return VIRTUAL_SOURCE
         try:
-            source = source or self.fixer.physical_source()
+            return self.fixer.physical_source()
         except FixError:
-            return
-        self.meter = LevelMeter(self.runner, source, self.show_level)
-        self.meter.start()
+            return None
+
+    def _restart_meter(self, source):
+        if self.meter and self.meter.running and self.meter.source == source:
+            return  # a gain change keeps the same recording
+        self._stop_meter()
+        if source:
+            self.meter = LevelMeter(self.runner, source, self.show_level)
+            self.meter.start()
 
     def _stop_meter(self):
         if self.meter:
@@ -295,18 +287,14 @@ class MainWindow(Adw.ApplicationWindow):
     def _on_test(self, *_):
         self._busy(True)
         self.test_button.set_label(_("Recording… speak now"))
-        source = VIRTUAL_SOURCE if self.status in (Status.FIXED, Status.FIXED_NOT_DEFAULT) else None
+        source = VIRTUAL_SOURCE if self.status in FIXED else None
 
         def work():
             pcm = diagnose.record(self.runner, source or self.fixer.physical_source(), TEST_SECONDS)
             with tempfile.TemporaryDirectory() as tmp:
                 wav = Path(tmp) / "test.wav"
-                with wave.open(str(wav), "wb") as w:
-                    w.setnchannels(2)
-                    w.setsampwidth(2)
-                    w.setframerate(diagnose.RATE)
-                    w.writeframes(pcm)
-                GLib.idle_add(lambda: self.test_button.set_label(_("Playing back…")) and False)
+                diagnose.write_wav(wav, pcm)
+                on_main(self.test_button.set_label, _("Playing back…"))
                 self.runner.run(["pw-play", str(wav)], timeout=TEST_SECONDS + 5)
 
         def done(_r, error):

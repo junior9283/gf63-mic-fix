@@ -19,7 +19,7 @@ from ..hardware import Hardware  # noqa: E402
 from ..sysrun import Result, Runner  # noqa: E402
 
 PREVIEW_LEVEL_DB = -22.0  # what a normal voice shows on the meter
-SETTLE_MS = 600  # switches animate when their state is set; wait for them to finish
+SETTLE_MS = 300  # then retried every SETTLE_MS until the first frame exists
 
 
 class PreviewFixer:
@@ -82,7 +82,7 @@ def screenshot(path: str, status_name: str) -> int:
                 return GLib.SOURCE_REMOVE
             return GLib.SOURCE_CONTINUE
 
-        GLib.timeout_add(SETTLE_MS, lambda: GLib.timeout_add(250, capture) and False)
+        GLib.timeout_add(SETTLE_MS, capture)
 
     run(fixer=PreviewFixer(Status[status_name]), runner=NullRunner(), on_ready=ready)
     if not outcome["ok"]:

@@ -1,12 +1,11 @@
 """Uninstall dialogs: confirm, undo the fix, remove the program, say goodbye."""
 
-import threading
-
-from gi.repository import Adw, GLib
+from gi.repository import Adw
 
 from .. import uninstall
 from ..i18n import _
 from ..install_type import install_type
+from .tasks import run_in_thread
 
 
 class UninstallFlow:
@@ -32,11 +31,12 @@ class UninstallFlow:
                 [("ok", _("OK"))],
             )
             return
-        password = _("Your password will be asked to remove the program.") if kind != "universal" else ""
+        body = _("The microphone goes back to how it was before the fix, and the program is removed.")
+        if kind != "universal":
+            body += " " + _("Your password will be asked to remove the program.")
         self._alert(
             _("Uninstall GF63 Mic Fix?"),
-            _("The microphone goes back to how it was before the fix, and the program is removed.")
-            + (" " + password if password else ""),
+            body,
             [("cancel", _("Cancel")), ("uninstall", _("Uninstall"))],
             lambda r: r == "uninstall" and self._run(kind),
             destructive="uninstall",
@@ -45,14 +45,11 @@ class UninstallFlow:
     def _run(self, kind):
         self.window.set_sensitive(False)
 
-        def work():
-            ok = uninstall.uninstall(kind, self.fixer, self.runner)
-            GLib.idle_add(lambda: self._finished(ok) and False)
+        run_in_thread(lambda: uninstall.uninstall(kind, self.fixer, self.runner), self._finished)
 
-        threading.Thread(target=work, daemon=True).start()
-
-    def _finished(self, ok):
+    def _finished(self, ok, error=None):
         self.window.set_sensitive(True)
+        ok = ok and not error
         if ok:
             self._alert(
                 _("GF63 Mic Fix was removed"),

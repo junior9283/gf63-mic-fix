@@ -3,6 +3,7 @@
 import math
 import os
 import sys
+import threading
 from array import array
 from collections.abc import Callable
 
@@ -28,6 +29,10 @@ class LevelMeter:
         self._proc = None
         self._watch = 0
 
+    @property
+    def running(self) -> bool:
+        return self._proc is not None
+
     def start(self) -> None:
         from gi.repository import GLib
 
@@ -49,7 +54,9 @@ class LevelMeter:
         )
 
     def _on_data(self, fd, condition) -> bool:
-        data = os.read(fd, CHUNK_BYTES) if condition & 1 else b""  # G_IO_IN
+        from gi.repository import GLib
+
+        data = os.read(fd, CHUNK_BYTES) if condition & GLib.IOCondition.IN else b""
         if not data:
             self._watch = 0
             self.stop()
@@ -64,9 +71,16 @@ class LevelMeter:
             GLib.source_remove(self._watch)
             self._watch = 0
         if self._proc:
-            self._proc.terminate()
-            try:
-                self._proc.wait(timeout=2)
-            except Exception:
-                self._proc.kill()
-            self._proc = None
+            proc, self._proc = self._proc, None
+            proc.terminate()
+            proc.stdout.close()
+            # Reap it off the main loop: pw-record exits quickly, but never block the UI on it.
+            threading.Thread(target=_reap, args=(proc,), daemon=True).start()
+
+
+def _reap(proc) -> None:
+    try:
+        proc.wait(timeout=2)
+    except Exception:
+        proc.kill()
+        proc.wait()
