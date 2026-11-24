@@ -39,8 +39,11 @@ def main(argv: list[str] | None = None, fixer: Fixer | None = None) -> int:
         print(__version__)
         return 0
     if args.check_update:
+        import logging
+
         from .updater import run_scheduled  # only the timer needs the network code
 
+        logging.basicConfig(level=logging.INFO)  # systemd puts stderr in the journal
         run_scheduled()
         return 0
     if args.screenshot:

@@ -182,3 +182,13 @@ def test_noise_suppression_regenerates_conf_and_keeps_gain(tmp_path, system):
     assert state.load(tmp_path / "cfg").noise_suppression is True
     assert system.volumes[PHYS] == 25
     assert f.noise_suppression() is True
+
+
+def test_apply_drops_noise_suppression_whose_plugin_was_removed(tmp_path, system):
+    # RNNoise was on, then its package was uninstalled: "Fix" must still work, without it.
+    state.save(tmp_path / "cfg", state.SavedState(PHYS, 54, noise_suppression=True))
+    f = fixer(tmp_path, system, plugin=None)
+    f.apply()
+    assert f.status() is Status.FIXED
+    assert state.load(tmp_path / "cfg").noise_suppression is False
+    assert "rnnoise" not in (tmp_path / "cfg" / "pipewire.conf").read_text().lower()

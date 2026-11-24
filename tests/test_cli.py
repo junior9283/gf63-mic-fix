@@ -131,3 +131,16 @@ def test_launcher_runs_from_app_dir():
     )
     assert out.returncode == 0, out.stderr
     assert out.stdout.strip() == __version__
+
+
+def test_check_update_failures_reach_the_journal(monkeypatch):
+    import logging
+
+    import gf63_mic_fix.updater as updater
+
+    monkeypatch.setattr(updater, "run_scheduled", lambda: logging.getLogger("gf63").info("offline"))
+    root = logging.getLogger()
+    monkeypatch.setattr(root, "handlers", [])
+    monkeypatch.setattr(root, "level", logging.WARNING)
+    assert cli.main(["--check-update"]) == 0
+    assert root.isEnabledFor(logging.INFO) and root.handlers

@@ -59,6 +59,11 @@ contents:
     dst: /etc/apt/sources.list.d/gf63-mic-fix.sources
     type: config
     packager: deb
+  # Next to the source, not in /usr: `apt remove` keeps /etc, and the source must keep its key.
+  - src: data/signing-key.asc
+    dst: /etc/apt/keyrings/gf63-mic-fix.asc
+    type: config
+    packager: deb
   # ... or, on Arch, from a weekly check that notifies about new releases.
   - src: data/gf63-mic-fix-update.service
     dst: /usr/lib/systemd/user/gf63-mic-fix-update.service

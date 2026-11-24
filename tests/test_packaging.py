@@ -111,3 +111,13 @@ def test_installed_launcher_runs_from_the_user_copy(release, sandbox):
     )
     assert r.returncode == 0, r.stderr
     assert "1.0.0" in r.stdout
+
+
+def test_apt_source_keeps_its_key_after_apt_remove():
+    # `apt remove` keeps conffiles (all of /etc) but deletes /usr: the key must live in /etc too,
+    # or every later `apt update` fails on a source with a missing key.
+    sources = (ROOT / "data/gf63-mic-fix.sources").read_text()
+    key = re.search(r"^Signed-By: (\S+)$", sources, re.M).group(1)
+    assert key.startswith("/etc/")
+    nfpm = (ROOT / "packaging/nfpm.yaml").read_text()
+    assert f"dst: {key}\n    type: config\n    packager: deb" in nfpm

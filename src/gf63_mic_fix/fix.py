@@ -162,6 +162,8 @@ class Fixer:
             )
         if noise_suppression is not None:
             saved.noise_suppression = noise_suppression
+        elif saved.noise_suppression and not self.rnnoise_finder():
+            saved.noise_suppression = False  # its package was removed: fix without it
         plugin = self._plugin(saved.noise_suppression)
         state.save(self.config_dir, saved)
         if not self._start(physical, plugin):
