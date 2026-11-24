@@ -210,7 +210,12 @@ class Fixer:
         self._pactl("set-default-source", VIRTUAL_SOURCE)
 
     def get_gain(self) -> int:
+        """Volume of the physical source, in % (100% = +60 dB on this codec)."""
         return self._volume(self.physical_source())
 
+    def set_physical_volume(self, percent: int) -> None:
+        """Unclamped; only for restoring a value read with get_gain()."""
+        self._set_volume(self.physical_source(), percent)
+
     def set_gain(self, percent: int) -> None:
-        self._set_volume(self.physical_source(), max(GAIN_MIN, min(GAIN_MAX, percent)))
+        self.set_physical_volume(max(GAIN_MIN, min(GAIN_MAX, percent)))
