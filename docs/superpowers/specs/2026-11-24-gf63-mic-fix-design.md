@@ -80,7 +80,7 @@ Tudo abaixo que não está na seção 6 é decisão minha (do autor do design), 
 - Nome do projeto e do repositório: `gf63-mic-fix` (`github.com/junior9283/gf63-mic-fix`).
 - Nome exibido: "GF63 Mic Fix". ID do app: `io.github.junior9283.Gf63MicFix`.
 - Interface em português do Brasil e inglês (gettext), conforme o idioma do sistema.
-- Pasta local: `/home/geraldo/Documentos/APP/GF63 MIC FIX`.
+- Pasta local: a pasta local do projeto.
 
 ### 7.2 Como a correção é aplicada (por usuário, sem root)
 
